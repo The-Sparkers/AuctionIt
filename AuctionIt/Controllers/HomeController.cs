@@ -16,7 +16,7 @@ namespace AuctionIt.Controllers
             var auctions = Auction.GetAllAuctions();
             //Current Auctions
             List<AuctionItemViewModel> currentAuctionsModel = new List<AuctionItemViewModel>();
-            var currentAuction = auctions.Where(x => x.IsClosed == false && x.IsEnded == false).ToList(); //returns a list of auctions which are not finished yet
+            var currentAuction = auctions.Where(x => x.IsClosed == false || x.IsEnded == false).ToList(); //returns a list of auctions which are not finished yet
             if (currentAuction.Count > 4)
             {
                 //sort the list by the number of bids on it and gets the top 4 of them

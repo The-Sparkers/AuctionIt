@@ -121,6 +121,12 @@
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.HashFunction.CityHash, Version=2.0.0.0, Culture=neutral, PublicKeyToken=80c9288e394c1322, processorArchitecture=MSIL">
@@ -300,6 +306,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\fonts.css" />
+    <Content Include="Content\PagedList.css" />
     <Content Include="Content\style.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
@@ -433,8 +440,8 @@
     <Content Include="Views\Shared\_AccountButton.cshtml" />
     <Content Include="Views\Home\_Slider.cshtml" />
     <Content Include="Views\Home\_AuctionWork.cshtml" />
-    <Content Include="Views\Home\_AuctionThumbnail.cshtml" />
-    <Content Include="Views\Home\_FinishedAuctionThumbnail.cshtml" />
+    <Content Include="Views\Shared\_AuctionThumbnail.cshtml" />
+    <Content Include="Views\Shared\_FinishedAuctionThumbnail.cshtml" />
     <Content Include="Views\Auctions\Index.cshtml" />
     <Content Include="Views\Account\Index.cshtml" />
     <Content Include="Views\Finance\Index.cshtml" />

@@ -1,7 +1,85 @@
-﻿
+﻿@using PagedList
+@using PagedList.Mvc
+@model IPagedList<AuctionIt.ViewModels.AuctionItemViewModel>
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Open Auctions";
+    List<SelectListItem> categoriesList = new List<SelectListItem>();
+    categoriesList.Add(new SelectListItem
+    {
+        Text = "Mobiles",
+        Value = "1"
+    });
+    categoriesList.Add(new SelectListItem
+    {
+        Text = "Cars",
+        Value = "2"
+    });
+    List<SelectListItem> citiesList = new List<SelectListItem>();
+    citiesList.Add(new SelectListItem
+    {
+        Text = "Lahore",
+        Value = "1"
+    });
+    citiesList.Add(new SelectListItem
+    {
+        Text = "Islamabad",
+        Value = "2"
+    });
+    List<SelectListItem> bidRangeList = new List<SelectListItem>();
+    bidRangeList.Add(new SelectListItem
+    {
+        Text = "<1000",
+        Value = "999"
+    });
+    bidRangeList.Add(new SelectListItem
+    {
+        Text = ">=1,000 & <5,000",
+        Value = "4999"
+    });
+    bidRangeList.Add(new SelectListItem
+    {
+        Text = ">=5,000 & <15,000",
+        Value = "14999"
+    });
+    bidRangeList.Add(new SelectListItem
+    {
+        Text = ">=15,000 & <50,000",
+        Value = "49999"
+    });
+    bidRangeList.Add(new SelectListItem
+    {
+        Text = ">=50,000",
+        Value = int.MaxValue.ToString()
+    });
 }
-
-<h2>Index</h2>
-
+<div class="container-fluid grid-demo grid-demo-underlined">
+    <div class="row">
+        <div class="col-md-2">
+            <!--Search Parameters Section-->
+            @using (Html.BeginForm("Index", "Auctions", FormMethod.Get, new { @class = "rd-form rd-mailform rd-form-inline" }))
+            {
+                @Html.DropDownList("category", categoriesList, "Any Category", new { @class = "form-input" })
+                @Html.DropDownList("city", citiesList, "Any City", new { @class = "form-input" })
+                @Html.DropDownList("bidRange", bidRangeList, "Any Price", new { @class = "form-input" })
+                <div class="form-button">
+                    <button class="button button-primary" type="submit">Search</button>
+                </div>
+            }
+        </div>
+        <div class="col-md-10">
+            <!--Auctions Section-->
+            <section class="section novi-bg novi-bg-img section-lg bg-white section-top-shadow">
+                <div class="container">
+                    <h2 class="text-center text-sm-left">Open <span class="h2-style">Auctions</span></h2>
+                    <div class="row row-50 mt-50">
+                        @foreach (var item in Model)
+                        {
+                            Html.RenderPartial("_AuctionThumbnail", item);
+                        }
+                    </div>
+                </div>
+                @Html.PagedListPager(Model, page => @Url.Action("Index", new { page }), new PagedListRenderOptions { Display = PagedListDisplayMode.IfNeeded, DisplayEllipsesWhenNotShowingAllPageNumbers = true, DisplayPageCountAndCurrentLocation = true, DisplayLinkToIndividualPages = false, DisplayLinkToFirstPage = PagedListDisplayMode.IfNeeded, DisplayLinkToLastPage = PagedListDisplayMode.IfNeeded, })
+            </section>
+        </div>
+    </div>
+</div>
