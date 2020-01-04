@@ -1,59 +1,65 @@
-﻿<div class="rd-navbar-main-outer">
+﻿@{
+    string homeActive = "";
+    string auctionsActive = "";
+    string accountActive = "";
+    string controllerName = HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString();
+    if (controllerName.Contains("Home"))
+    {
+        homeActive = "active";
+    }
+    else if (controllerName.Contains("Auctions"))
+    {
+        auctionsActive = "active";
+    }
+    else if (controllerName.Contains("Users") || controllerName.Contains("Finance") || controllerName.Contains("Account"))
+    {
+        accountActive = "active";
+    }
+    bool isAccountNegative = false;
+}
+<div class="rd-navbar-main-outer">
     <div class="rd-navbar-main">
         <!--RD Navbar Panel-->
         @Html.Partial("_Logo")
         <div class="rd-navbar-main-element">
             <div class="rd-navbar-nav-wrap">
                 <ul class="rd-navbar-nav">
-                    <li class="rd-nav-item active">
-                        <a class="rd-nav-link" href="index.html">Home</a>
+                    <li class="rd-nav-item @homeActive">
+                        <a class="rd-nav-link" href="@Url.Action("Index","Home")">Home</a>
                     </li>
-                    <li class="rd-nav-item">
-                        <a class="rd-nav-link" href="about.html">About</a>
-                    </li>
-                    <li class="rd-nav-item">
-                        <a class="rd-nav-link" href="sell.html">Sell</a>
-                    </li>
-                    <li class="rd-nav-item">
-                        <a class="rd-nav-link" href="buy.html">Buy</a>
-                    </li>
-                    <li class="rd-nav-item">
-                        <a class="rd-nav-link">Pages</a>
+                    <li class="rd-nav-item @auctionsActive">
+                        <a class="rd-nav-link">Auctions</a>
                         <ul class="rd-menu rd-navbar-dropdown">
                             <li class="rd-dropdown-item">
-                                <a class="rd-dropdown-link" href="404.html">404</a>
+                                <a class="rd-dropdown-link" href="@Url.Action("Index","Auctions")">Browse</a>
                             </li>
                             <li class="rd-dropdown-item">
-                                <a class="rd-dropdown-link" href="typography.html">Typography</a>
+                                <a class="rd-dropdown-link" href="@Url.Action("Index", "MyAuctions")">My Auctions</a>
                             </li>
                             <li class="rd-dropdown-item">
-                                <a class="rd-dropdown-link" href="buttons.html">Buttons</a>
-                            </li>
-                            <li class="rd-dropdown-item">
-                                <a class="rd-dropdown-link" href="forms.html">Forms</a>
-                            </li>
-                            <li class="rd-dropdown-item">
-                                <a class="rd-dropdown-link" href="tabs-and-accordions.html">Tabs and accordions</a>
-                            </li>
-                            <li class="rd-dropdown-item">
-                                <a class="rd-dropdown-link" href="progress-bars.html">Progress bars</a>
-                            </li>
-                            <li class="rd-dropdown-item">
-                                <a class="rd-dropdown-link" href="tables.html">Tables</a>
-                            </li>
-                            <li class="rd-dropdown-item">
-                                <a class="rd-dropdown-link" href="grid-system.html">Grid system</a>
-                            </li>
-                            <li class="rd-dropdown-item">
-                                <a class="rd-dropdown-link" href="privacy-policy.html">Privacy policy</a>
-                            </li>
-                            <li class="rd-dropdown-item">
-                                <a class="rd-dropdown-link" href="search-results.html">Search results</a>
+                                <a class="rd-dropdown-link" href="@Url.Action("Index", "PreviousAuctions")">Previous</a>
                             </li>
                         </ul>
                     </li>
-                    <li class="rd-nav-item">
-                        <a class="rd-nav-link" href="contacts.html">Contacts</a>
+                    <li class="rd-nav-item @accountActive">
+                        <a class="rd-nav-link">Account</a>
+                        <ul class="rd-menu rd-navbar-dropdown">
+                            <li class="rd-dropdown-item">
+                                <a class="rd-dropdown-link" href="@Url.Action("AccountStatement","Finance")">
+                                    @if (isAccountNegative)
+                                    {
+                                        <font color="red">@AuctionIt.Common.Strings.CURRENCY_UNIT 0.0</font>
+                                    }
+                                    else
+                                    {
+                                        <font color="green">@AuctionIt.Common.Strings.CURRENCY_UNIT 0.0</font>
+                                    }
+                                </a>
+                            </li>
+                            <li class="rd-dropdown-item">
+                                <a class="rd-dropdown-link" href="@Url.Action("ViewProfile","Account")">Profile</a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </div>
