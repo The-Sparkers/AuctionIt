@@ -1,0 +1,32 @@
+﻿<header class="section page-header">
+    <!--RD Navbar-->
+    <div class="rd-navbar-wrap">
+        <nav class="rd-navbar rd-navbar-classic" data-layout="rd-navbar-fixed" data-sm-layout="rd-navbar-fixed" data-md-layout="rd-navbar-fixed" data-md-device-layout="rd-navbar-fixed" data-lg-layout="rd-navbar-static" data-lg-device-layout="rd-navbar-static" data-xl-layout="rd-navbar-static" data-xl-device-layout="rd-navbar-static" data-lg-stick-up-offset="46px" data-xl-stick-up-offset="46px" data-xxl-stick-up-offset="46px" data-lg-stick-up="true" data-xl-stick-up="true" data-xxl-stick-up="true">
+            <div class="rd-navbar-collapse-toggle rd-navbar-fixed-element-1" data-rd-navbar-toggle=".rd-navbar-collapse"><span></span></div>
+            <div class="rd-navbar-aside-outer rd-navbar-collapse bg-gray-900">
+                <div class="rd-navbar-aside">
+                    <div class="rd-navbar-aside-left">
+                        <ul class="list-inline list-inline-lg">
+                            <li>
+                                <div class="unit unit-spacing-sm align-items-center">
+                                    <div class="unit-left"><span class="icon icon-md text-middle fa-phone text-primary"></span></div>
+                                    <div class="unit-body header-phone-wrap">Helpline:&nbsp;<a class="header-phone" href="tel:#">0300-1234567</a></div>
+                                </div>
+                            </li>
+                            @*<li class="header-hours">Opening Hours: 8am-8pm PST M-Th; 6am-3pm PST Fri</li>*@
+                        </ul>
+                    </div>
+                    @if (Request.IsAuthenticated)
+                    {
+                        @Html.Partial("_AccountButton")
+                    }
+                    else
+                    {
+                        @Html.Partial("_LoginButtons")
+                    }
+                </div>
+            </div>
+            @Html.Partial("_Nav")
+        </nav>
+    </div>
+</header>
