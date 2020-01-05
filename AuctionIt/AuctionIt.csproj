@@ -299,6 +299,7 @@
     <Compile Include="Models\Wallet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\AuctionsViewModels.cs" />
     <Compile Include="ViewModels\HomeViewModels.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -446,6 +447,7 @@
     <Content Include="Views\Account\Index.cshtml" />
     <Content Include="Views\Finance\Index.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
+    <Content Include="Views\Auctions\_SearchBox.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

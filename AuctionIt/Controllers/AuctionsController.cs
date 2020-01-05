@@ -11,7 +11,6 @@ namespace AuctionIt.Controllers
     public class AuctionsController : Controller
     {
         // GET: Auctions
-        [Route(Name = "IndexPager", Order = 0)]
         public ActionResult Index(int? page)
         {
             List<AuctionItemViewModel> itemViewModels = new List<AuctionItemViewModel>();
@@ -108,8 +107,21 @@ namespace AuctionIt.Controllers
                 NumberOfBids = 3,
                 TimeToEnd = TimeSpan.FromMinutes(12)
             });
-            PagedList<AuctionItemViewModel> model = new PagedList<AuctionItemViewModel>(itemViewModels, page ?? 1, int.MaxValue);
+            IndexSearchViewModel model = new IndexSearchViewModel
+            {
+                AuctionItems = new PagedList<AuctionItemViewModel>(itemViewModels, page ?? 1, int.MaxValue)
+            };
             return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Index(IndexSearchViewModel model)
+        {
+            if (model.CategoryId == 0 && model.EndingPeriod == EndingPeriod.Any && model.BidRange == BidRange.Any)
+            {
+                return Index(page: null);
+            }
+            return View();
         }
     }
 }

@@ -18,6 +18,13 @@ namespace AuctionIt
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
+
+            routes.MapRoute(
+                name: "Pager",
+                url: "{controller}/{action}/{page}",
+                defaults: new { controller = "Home", action = "Index", page = 1 }
+            );
+
         }
     }
 }
