@@ -413,6 +413,7 @@
     <Content Include="fonts\materialdesignicons-webfont.ttf" />
     <Content Include="fonts\materialdesignicons-webfont.woff" />
     <Content Include="fonts\materialdesignicons-webfont.woff2" />
+    <None Include="Properties\PublishProfiles\AuctionIt - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\core.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -452,6 +453,7 @@
     <Content Include="Views\Auctions\_SearchBox.cshtml" />
     <Content Include="Views\Errors\Error404.cshtml" />
     <Content Include="Views\Errors\Error500.cshtml" />
+    <Content Include="Views\Auctions\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

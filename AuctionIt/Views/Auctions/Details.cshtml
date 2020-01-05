@@ -1,0 +1,142 @@
+﻿@model AuctionIt.ViewModels.AuctionDetailsViewModel
+
+@{
+    ViewBag.Title = "Details";
+    var title = Model.Title;
+    string title1 = title, title2 = "";
+    var mid = title.Length / 2;
+    if (title.ToCharArray()[mid] == ' ')
+    {
+        title1 = title.Substring(0, mid + 1);
+        title2 = title.Substring(mid + 1, title.Length - (mid + 2));
+    }
+    else if (title.ToCharArray()[mid - 1] == ' ')
+    {
+        title1 = title.Substring(0, mid);
+        title2 = title.Substring(mid, title.Length - (mid + 1));
+    }
+    else
+    {
+        int j = mid;
+        for (int i = mid; (i < title.Length) || (j > 0); i++)
+        {
+            if (title.ToCharArray()[i] == ' ')
+            {
+                title1 = title.Substring(0, i + 1);
+                title2 = title.Substring(i + 1, title.Length - (i + 2));
+                break;
+            }
+            j--;
+            if (title.ToCharArray()[j] == ' ')
+            {
+                title1 = title.Substring(0, j + 1);
+                title2 = title.Substring(j + 1, title.Length - (i + 2));
+                break;
+            }
+        }
+    }
+
+}
+<br />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-left text-sm-left">
+                @title1
+                <span class="h2-style">@title2</span>
+            </h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="container grid-demo grid-demo-underlined">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!--Images Section-->
+                        <img src="@Url.Content(AuctionIt.Common.Strings.IMAGES_UPLOAD_PATH+Model.Images[0])" class="img-responsive" />
+                    </div>
+                    <div class="col-md-12">
+                        <!--Details Section-->
+
+                        <h3>Details</h3>
+                        <div class="container grid-demo grid-demo-underlined">
+                            <div class="row">
+                                <!--Additional Attributes Section-->
+                                @foreach (var item in Model.Attributes)
+                                {
+                                    <div class="col-md-4">
+                                        <h5 class="text-center text-sm-center">
+                                            @item.Name:
+                                            <span class="h2-style">@item.Value</span>
+                                        </h5>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <h3>Description</h3>
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-xl-12">
+                                    <p>
+                                        @Model.Description
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="container grid-demo grid-demo-underlined">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!--Price Section-->
+                        <p>
+                            <h2 class="text-left text-sm-left">
+                                @AuctionIt.Common.Strings.CURRENCY_UNIT
+                                <span class="h2-style">@Model.HighestBid</span>
+                                @if (!Model.IsFavorite)
+                                {
+                                    <a class="button-icon button-icon-left button-sm post-modern-link" href="@Url.Action("AddToInterest","Auctions",new { id=Model.AuctionId})">
+                                        <span class="icon fa fa-heart-o"></span>
+
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="button-icon button-icon-left button-sm post-modern-link" href="@Url.Action("AddToInterest","Auctions",new { id=Model.AuctionId})">
+                                        <span class="icon fa fa-heart"></span>
+
+                                    </a>
+                                }
+                            </h2>
+                            <h5 class="text-left text-sm-left">
+                                @Html.LabelFor(m => m.ActualPrice)
+                                <span class="h2-style">@AuctionIt.Common.Strings.CURRENCY_UNIT @Model.ActualPrice</span>
+                            </h5>
+                            <br />
+                            <a class="button button-box-right button-primary" href="@Url.Action("PlaceBid","Auction", new { id=Model.AuctionId })">
+                                Place a bid
+                                <div class="button-box">
+                                    <div class="button-box-text">X</div>
+                                    <div class="button-box-count">@Model.NumberOfBids</div>
+                                </div>
+                            </a>
+                        </p>
+                    </div>
+                    <div class="col-md-12">
+                        <!--Seller Section-->
+                        <h3>@Html.LabelFor(m => m.PosterName)</h3>
+                        <h2 class="text-left text-sm-left">
+                            @Model.PosterName.FirstName
+                            <span class="h2-style">@Model.PosterName.LastName</span>
+                        </h2>
+                        <h6 class="post-modern-link"><a href="@Url.Action("ViewByUser","Auctions",new { id=Model.UserId})">More by this user</a></h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
