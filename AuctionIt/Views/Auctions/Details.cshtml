@@ -104,15 +104,15 @@
                                 <span class="h2-style">@Model.HighestBid</span>
                                 @if (!Model.IsFavorite)
                                 {
-                                    <a class="button-icon button-icon-left button-sm post-modern-link" href="@Url.Action("AddToInterest","Auctions",new { id=Model.AuctionId})">
-                                        <span class="icon fa fa-heart-o"></span>
+                                    <a class="button-icon button-icon-left button-sm post-modern-link text-primary" href="@Url.Action("AddToInterest","Auctions",new { id=Model.AuctionId})">
+                                        <span class="icon fa fa-heart-o" id="fav"></span>
 
                                     </a>
                                 }
                                 else
                                 {
-                                    <a class="button-icon button-icon-left button-sm post-modern-link" href="@Url.Action("AddToInterest","Auctions",new { id=Model.AuctionId})">
-                                        <span class="icon fa fa-heart"></span>
+                                    <a class="button-icon button-icon-left button-sm post-modern-link text-primary" href="@Url.Action("AddToInterest","Auctions",new { id=Model.AuctionId})">
+                                        <span class="icon fa fa-heart" id="fav"></span>
 
                                     </a>
                                 }
@@ -146,3 +146,25 @@
     </div>
 </div>
 
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".fa-heart-o").mouseover(function () {
+                $("#fav").removeClass("fa-heart-o");
+                $("#fav").addClass("fa-heart");
+            });
+            $(".fa-heart-o").mouseout(function () {
+                $("#fav").removeClass("fa-heart");
+                $("#fav").addClass("fa-heart-o");
+            });
+            $(".fa-heart").mouseover(function () {
+                $("#fav").removeClass("fa-heart");
+                $("#fav").addClass("fa-heart-o");
+            });
+            $(".fa-heart").mouseout(function () {
+                $("#fav").removeClass("fa-heart-o");
+                $("#fav").addClass("fa-heart");
+            });
+        });
+    </script>
+}
