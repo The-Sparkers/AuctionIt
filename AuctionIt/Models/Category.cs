@@ -13,7 +13,7 @@ namespace AuctionIt.Models
     {
         private int id;
         private string name;
-        private List<AdditionalAttributes> additionalAttributes;
+        private List<AdditionalAttribute> additionalAttributes;
 
         public Category(int id)
         {
@@ -26,7 +26,7 @@ namespace AuctionIt.Models
             //add new category to the database
         }
         [DataMember]
-        public List<AdditionalAttributes> AdditionalAttributes
+        public List<AdditionalAttribute> AdditionalAttributes
         {
             get { return additionalAttributes; }
         }
@@ -75,9 +75,9 @@ namespace AuctionIt.Models
         /// <param name="name">name of the attribute</param>
         /// <param name="type">type of the data</param>
         /// <param name="defaultVal">default value</param>
-        public AdditionalAttributes AddAdditionalAttribute(string name, AdditionalAttributes.AttributeType type, string defaultVal = "")
+        public AdditionalAttribute AddAdditionalAttribute(string name, AdditionalAttribute.AttributeType type, string defaultVal = "")
         {
-            return new AdditionalAttributes(name, type, defaultVal);
+            return new AdditionalAttribute(name, type, defaultVal);
         }
         /// <summary>
         /// Search a category by its name

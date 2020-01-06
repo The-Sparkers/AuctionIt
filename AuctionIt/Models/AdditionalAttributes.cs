@@ -6,19 +6,19 @@ using System.Runtime.Serialization;
 namespace AuctionIt.Models
 {
     [DataContract]
-    public class AdditionalAttributes : DbConnection
+    public class AdditionalAttribute : DbConnection
     {
         private string defaultVal;
         private string name;
         private AttributeType type;
         private int id;
 
-        public AdditionalAttributes(int id)
+        public AdditionalAttribute(int id)
         {
             this.id = id;
             InitiateValues();
         }
-        internal AdditionalAttributes(string name, AttributeType type, string defaultVal)
+        internal AdditionalAttribute(string name, AttributeType type, string defaultVal)
         {
             this.name = name;
             this.type = type;
@@ -78,9 +78,9 @@ namespace AuctionIt.Models
         /// </summary>
         /// <param name="max">maximum number of data (0 means no limit)</param>
         /// <returns></returns>
-        public static List<AdditionalAttributes> GetAllAdditionalAttributes(int max = 0)
+        public static List<AdditionalAttribute> GetAllAdditionalAttributes(int max = 0)
         {
-            List<AdditionalAttributes> lstAttributes = new List<AdditionalAttributes>();
+            List<AdditionalAttribute> lstAttributes = new List<AdditionalAttribute>();
             return lstAttributes;
         }
         public override List<object> GetAllData()

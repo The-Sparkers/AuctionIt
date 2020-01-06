@@ -31,4 +31,5 @@ namespace AuctionIt.ViewModels
         public string ItemName { get; set; }
         public int NumberOfBids { get; set; }
     }
+
 }

@@ -258,6 +258,15 @@ namespace AuctionIt.Models
             return null;
         }
         /// <summary>
+        /// Returns a list of values of additional attributes imposed by the Category
+        /// </summary>
+        /// <returns></returns>
+        public List<AdditionalAttributeValue> GetAdditionalAttributes()
+        {
+            List<AdditionalAttributeValue> additionalAttributes = new List<AdditionalAttributeValue>();
+            return additionalAttributes;
+        }
+        /// <summary>
         /// Static method to create an advertisement
         /// </summary>
         /// <param name="user">who is creating the advertisement</param>
@@ -266,7 +275,7 @@ namespace AuctionIt.Models
         /// <param name="startingPrice">price from which the auction will start</param>
         /// <param name="additionalAttibutes">additional attibutes from the category</param>
         /// <returns></returns>
-        public static Advertisement CreateAdvertisement(PrimaryUser user, string title, string description, decimal startingPrice, List<AdditionalAttributes.AttributeValue> additionalAttibutes)
+        public static Advertisement CreateAdvertisement(PrimaryUser user, string title, string description, decimal startingPrice, List<AdditionalAttribute.AttributeValue> additionalAttibutes)
         {
             DateTime postingTime = DateTime.Now;
             return null;
@@ -330,5 +339,11 @@ namespace AuctionIt.Models
         {
             return GetType();
         }
+    }
+
+    public class AdditionalAttributeValue
+    {
+        public AdditionalAttribute Attribute { get; set; }
+        public string Value { get; set; }
     }
 }
