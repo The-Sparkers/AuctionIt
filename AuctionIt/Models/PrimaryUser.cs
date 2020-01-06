@@ -1,7 +1,7 @@
-﻿using System;
+﻿using ModelSQLHandler;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using ModelSQLHandler;
 
 namespace AuctionIt.Models
 {
@@ -9,7 +9,7 @@ namespace AuctionIt.Models
     public class PrimaryUser : User
     {
         private string cnic;
-        private double sellerRating;
+        private readonly double sellerRating;
 
         public PrimaryUser(long id) : base(id)
         {
@@ -24,18 +24,21 @@ namespace AuctionIt.Models
         /// Rating for this user as a seller
         /// </summary>
         [DataMember]
-        public double SellerRating
-        {
-            get { return sellerRating; }
-        }
+        public double SellerRating => sellerRating;
         /// <summary>
         /// Unique CNIC of this user
         /// </summary>
         [DataMember]
         public string CNIC
         {
-            get { return cnic; }
-            set { cnic = value; }
+            get
+            {
+                return cnic;
+            }
+            set
+            {
+                cnic = value;
+            }
         }
         /// <summary>
         /// Gets the history of all th bids placed by this user
@@ -54,6 +57,15 @@ namespace AuctionIt.Models
         {
             List<Advertisement> lstAd = new List<Advertisement>();
             return lstAd;
+        }
+        /// <summary>
+        /// Returns a list of ads that were added to its interest list by this user
+        /// </summary>
+        /// <returns></returns>
+        public List<Advertisement> GetFavoriteAdvertisements()
+        {
+            List<Advertisement> advertisements = new List<Advertisement>();
+            return advertisements;
         }
         /// <summary>
         /// Returns a user searched by its cnic number

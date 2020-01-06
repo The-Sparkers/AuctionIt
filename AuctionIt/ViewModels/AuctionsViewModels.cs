@@ -24,15 +24,15 @@ namespace AuctionIt.ViewModels
         }
         public long AuctionId { get; set; }
         public long AdId { get; set; }
-        [Display(Name ="Auction Title")]
+        [Display(Name = "Auction Title")]
         public string Title { get; set; }
-        [Display(Name ="Item Description")]
+        [Display(Name = "Item Description")]
         public string Description { get; set; }
-        [Display(Name ="Opening Price")]
+        [Display(Name = "Opening Price")]
         public decimal ActualPrice { get; set; }
-        [Display(Name ="Current Bid")]
+        [Display(Name = "Current Bid")]
         public decimal HighestBid { get; set; }
-        [Display(Name ="Posted By")]
+        [Display(Name = "Posted By")]
         public Models.User.NameFormat PosterName { get; set; }
         public List<string> Images { get; set; }
         public List<Attribute> Attributes { get; set; }
@@ -40,6 +40,37 @@ namespace AuctionIt.ViewModels
         public long UserId { get; set; }
         public int NumberOfBids { get; set; }
         public TimeSpan RemainingTime { get; set; }
+    }
+    public class FinishedAuctionViewModel
+    {
+        public long Id { get; set; }
+        [Display(Name = "Title")]
+        public string Name { get; set; }
+        [Display(Name = "Closing Price")]
+        public decimal Price { get; set; }
+
+        public string Image { get; set; }
+    }
+    public class AuctionItemViewModel
+    {
+        public long Id { get; set; }
+        [Display(Name = "To End")]
+        public TimeSpan TimeToEnd { get; set; }
+        public string Image { get; set; }
+        [Display(Name = "Opening Price")]
+        public decimal ActualPrice { get; set; }
+        [Display(Name = "Current Bid")]
+        public decimal HighestBid { get; set; }
+        [Display(Name = "Title")]
+        public string ItemName { get; set; }
+        [Display(Name = "Bids")]
+        public int NumberOfBids { get; set; }
+    }
+    public class FavoriteAuctionItemViewModel
+    {
+        public AuctionItemViewModel AuctionItem { get; set; }
+        public FinishedAuctionViewModel FinishedAuction { get; set; }
+        public bool IsClosedOrEnded { get; set; }
     }
     public struct Attribute
     {

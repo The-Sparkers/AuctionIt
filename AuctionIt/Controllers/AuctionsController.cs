@@ -246,5 +246,103 @@ namespace AuctionIt.Controllers
                 return RedirectToAction("Error500", "Errors", new { message = ex.Message });
             }
         }
+
+        public ActionResult Favorites(int? page)
+        {
+            try
+            {
+                List<FavoriteAuctionItemViewModel> favoriteAuctions = new List<FavoriteAuctionItemViewModel>
+                {
+                    //foreach (var item in user.GetFavoriteAdvertisements())
+                    //{
+                    //    var auction = item.GetAuction();
+                    //    FavoriteAuctionItemViewModel favoriteAuction = new FavoriteAuctionItemViewModel
+                    //    {
+                    //        IsClosedOrEnded = (auction.IsEnded || auction.IsClosed)
+                    //    };
+                    //    if (favoriteAuction.IsClosedOrEnded)
+                    //    {
+                    //        favoriteAuction.FinishedAuction = new FinishedAuctionViewModel
+                    //        {
+                    //            Id = auction.Id,
+                    //            Image = item.Images[0].FileName,
+                    //            Name = item.Title,
+                    //            Price = auction.HighestBid.Price
+                    //        };
+                    //    }
+                    //    else
+                    //    {
+                    //        favoriteAuction.AuctionItem = new AuctionItemViewModel
+                    //        {
+                    //            ActualPrice = item.StartingPrice,
+                    //            HighestBid = auction.HighestBid.Price,
+                    //            Id = auction.Id,
+                    //            Image = item.Images[0].FileName,
+                    //            ItemName = item.Title,
+                    //            NumberOfBids = auction.GetBidsHistory().Count,
+                    //            TimeToEnd = auction.RemainingTime
+                    //        };
+                    //    }
+                    //    favoriteAuctions.Add(favoriteAuction);
+                    //}
+                    new FavoriteAuctionItemViewModel
+                    {
+                        IsClosedOrEnded = false,
+                        AuctionItem = new AuctionItemViewModel
+                        {
+                            ActualPrice = 2000,
+                            HighestBid = 3500,
+                            Id = 1,
+                            Image = "page1_pic5-270x217.jpg",
+                            ItemName = "Apple MacBook Air 13'' 1.8GHz 128GB",
+                            NumberOfBids = 3,
+                            TimeToEnd = TimeSpan.FromMinutes(20)
+                        }
+                    },
+                    new FavoriteAuctionItemViewModel
+                    {
+                        IsClosedOrEnded = true,
+                        FinishedAuction = new FinishedAuctionViewModel
+                        {
+                            Id = 10,
+                            Name = "Apple MacBook Pro 13'' 2.3GHz 128GB Space Gray",
+                            Price = 7800,
+                            Image = "page1_pic1-270x271.jpg"
+                        }
+                    },
+                    new FavoriteAuctionItemViewModel
+                    {
+                        IsClosedOrEnded = false,
+                        AuctionItem = new AuctionItemViewModel
+                        {
+                            ActualPrice = 10000,
+                            HighestBid = 13890,
+                            Id = 3,
+                            Image = "page1_pic7-270x217.jpg",
+                            ItemName = "Apple Mac mini Late 2018 (MRTT2)",
+                            NumberOfBids = 4,
+                            TimeToEnd = TimeSpan.FromMinutes(45)
+                        }
+                    },
+                    new FavoriteAuctionItemViewModel
+                    {
+                        IsClosedOrEnded = true,
+                        FinishedAuction = new FinishedAuctionViewModel
+                        {
+                            Id = 11,
+                            Name = "Apple iPad Pro 11” Wi-Fi 64GB Silver",
+                            Price = 6700,
+                            Image = "page1_pic2-270x271.jpg"
+                        }
+                    }
+                };
+                PagedList<FavoriteAuctionItemViewModel> model = new PagedList<FavoriteAuctionItemViewModel>(favoriteAuctions, page ?? 1, Common.Values.PAGE_SIZE);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Error500", "Errors", new { message = ex.Message });
+            }
+        }
     }
 }
