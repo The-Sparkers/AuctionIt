@@ -201,7 +201,8 @@ namespace AuctionIt.Controllers
                     PosterName = new User.NameFormat { FirstName = "Umair", LastName = "Tahir" },
                     Title = "Billieblush Girls Blue Fluffy Cardigan",
                     IsFavorite = false,
-                    NumberOfBids = 10
+                    NumberOfBids = 10,
+                    RemainingTime = TimeSpan.FromMinutes(30.4)
                 };
                 model.Images.Add("page1_pic6-270x217.jpg");
                 model.Images.Add("page1_pic7-270x217.jpg");

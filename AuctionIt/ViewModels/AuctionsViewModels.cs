@@ -1,4 +1,5 @@
 ﻿using PagedList;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -38,6 +39,7 @@ namespace AuctionIt.ViewModels
         public bool IsFavorite { get; set; }
         public long UserId { get; set; }
         public int NumberOfBids { get; set; }
+        public TimeSpan RemainingTime { get; set; }
     }
     public struct Attribute
     {

@@ -40,11 +40,17 @@
 <br />
 <div class="container-fluid">
     <div class="row">
-        <div class="col-12">
+        <div class="col-8">
             <h2 class="text-left text-sm-left">
                 @title1
                 <span class="h2-style">@title2</span>
             </h2>
+        </div>
+        <div class="col-4">
+            <h4 class="countdown" data-format="HMS" data-until="+@Model.RemainingTime.TotalSeconds"></h4>
+            <h4 class="text-left text-sm-left">
+                <span class="h2-style"><span class="icon mdi mdi-watch"></span> to End</span>
+            </h4>
         </div>
     </div>
     <div class="row">
