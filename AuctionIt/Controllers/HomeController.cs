@@ -125,5 +125,29 @@ namespace AuctionIt.Controllers
             model.FinishedAuctions = finishedAuctionsModel;
             return View(model);
         }
+
+        public JsonResult GetTagsForAutoComplete(string term)
+        {
+            try
+            {
+                List<string> items = new List<string>
+                {
+                    "Ali",
+                    "Hamza",
+                    "Umair",
+                    "Aslam",
+                    "Hamid",
+                    "Ghafoor",
+                    "Haider",
+                    "Zia",
+                    "Saleem"
+                };
+                return Json(items.Where(x => x.ToUpper().StartsWith(term.ToUpper())).ToList(), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
+            {
+                return Json(null);
+            }
+        }
     }
 }
