@@ -438,5 +438,38 @@ namespace AuctionIt.Controllers
                 return RedirectToAction("Error500", "Errors", new { message = ex.Message });
             }
         }
+        public ActionResult MyAdvertisements(int? page)
+        {
+            try
+            {
+                bool isVerified = false, isSold = false, isEnded = true, isClosed = true;
+                List<MyAdvertismentsViewModel> model = new List<MyAdvertismentsViewModel>
+                {
+                    new MyAdvertismentsViewModel
+                    {
+                        Category = "Mobile",
+                        Id = 1,
+                        Image = "page1_pic2-270x271.jpg",
+                        PostedTime = Common.Functions.GetPassedTimeSpanFromNow(new DateTime(2020, 1, 6)),
+                        Status = isSold?"Sold":(isVerified?"Verified":((isEnded||isClosed)?"Rejected":"Pending")),
+                         Title="Lorem Ipsum Dolor"
+                    },
+                    new MyAdvertismentsViewModel
+                    {
+                         Category="Cloths",
+                          Title="Ipsum Lorem",
+                           Id=2,
+                            Image="page1_pic6-270x217.jpg",
+                             PostedTime=Common.Functions.GetPassedTimeSpanFromNow(new DateTime(2019,12,31)),
+                              Status="Sold"
+                    }
+                };
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Error500", "Errors", new { message = ex.Message });
+            }
+        }
     }
 }

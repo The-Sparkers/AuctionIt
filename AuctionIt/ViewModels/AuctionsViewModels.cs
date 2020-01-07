@@ -105,6 +105,20 @@ namespace AuctionIt.ViewModels
         public User.NameFormat Name { get; set; }
         public string ProfilePic { get; set; }
     }
+    public class MyAdvertismentsViewModel
+    {
+        public long Id { get; set; }
+        [Display(Name = "Ad. Title")]
+        public string Title { get; set; }
+        [Display(Name = "Picture")]
+        public string Image { get; set; }
+        [Display(Name = "Category")]
+        public string Category { get; set; }
+        [Display(Name = "Posted Time")]
+        public string PostedTime { get; set; }
+        [Display(Name = "Status")]
+        public string Status { get; set; }
+    }
     public struct Attribute
     {
         public string Name { get; set; }
