@@ -2,7 +2,7 @@
 using Microsoft.Owin.Security.DataProtection;
 using Owin;
 
-[assembly: OwinStartupAttribute(typeof(AuctionIt.Startup))]
+[assembly: OwinStartup(typeof(AuctionIt.Startup))]
 namespace AuctionIt
 {
     public partial class Startup

@@ -271,6 +271,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Common\Functions.cs" />
     <Compile Include="Common\Strings.cs" />
     <Compile Include="Common\Values.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -373,6 +374,7 @@
     <Content Include="images\vimeo-play.png" />
     <Content Include="images\youtube-play.png" />
     <Content Include="images\_blank.png" />
+    <Content Include="images_upload\team-01-270x270.jpg" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\HelpPage\Views\Web.config" />
@@ -454,6 +456,11 @@
     <Content Include="Views\Errors\Error404.cshtml" />
     <Content Include="Views\Errors\Error500.cshtml" />
     <Content Include="Views\Auctions\Details.cshtml" />
+    <Content Include="Views\Auctions\Favorites.cshtml" />
+    <Content Include="Views\Auctions\FinishedDetails.cshtml" />
+    <Content Include="Views\Auctions\_PostedBy.cshtml" />
+    <Content Include="Views\Auctions\_BidTable.cshtml" />
+    <Content Include="Views\Auctions\MyAdvertisements.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,33 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model IPagedList<AuctionIt.ViewModels.FavoriteAuctionItemViewModel>
+
+@{
+    ViewBag.Title = "Favorites";
+}
+<div class="container-fluid grid-demo grid-demo-underlined">
+    <div class="row">
+        <div class="col-md-12">
+            <!--Auctions Section-->
+            <section class="section novi-bg novi-bg-img section-lg bg-white section-top-shadow">
+                <div class="container">
+                    <h2 class="text-center text-sm-left">Favorite <span class="h2-style">Auctions</span></h2>
+                    <div class="row row-50 mt-50">
+                        @foreach (var item in Model)
+                        {
+                            if (!item.IsClosedOrEnded)
+                            {
+                                Html.RenderPartial("_AuctionThumbnail", item.AuctionItem);
+                            }
+                            else
+                            {
+                                Html.RenderPartial("_FinishedAuctionThumbnail", item.FinishedAuction);
+                            }
+                        }
+                    </div>
+                </div>
+                @Html.PagedListPager(Model, page => @Url.Action("Favorites", new { page }), new PagedListRenderOptions { Display = PagedListDisplayMode.IfNeeded, DisplayEllipsesWhenNotShowingAllPageNumbers = true, DisplayPageCountAndCurrentLocation = true, DisplayLinkToIndividualPages = false, DisplayLinkToFirstPage = PagedListDisplayMode.IfNeeded, DisplayLinkToLastPage = PagedListDisplayMode.IfNeeded, })
+            </section>
+        </div>
+    </div>
+</div>

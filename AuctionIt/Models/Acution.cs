@@ -200,7 +200,7 @@ namespace AuctionIt.Models
 
         public override string GetReferenceString()
         {
-            return String.Format("Start Time: {0}, End Time: {1}, Start Price: {2}", startTime, endTime, startingBidPrice);
+            return string.Format("Start Time: {0}, End Time: {1}, Start Price: {2}", startTime, endTime, startingBidPrice);
         }
 
         public override void InitiateValues()
@@ -226,32 +226,26 @@ namespace AuctionIt.Models
         [DataContract]
         public class Bid
         {
-            Auction auction;
-            PrimaryUser bidder;
-            decimal price;
-            private DateTime timeStamp;
+            private readonly Auction auction;
+            private readonly PrimaryUser bidder;
+            private readonly decimal price;
+
             public Bid(Auction auction, PrimaryUser bidder, decimal price, DateTime timeStamp)
             {
                 this.auction = auction;
                 this.bidder = bidder;
                 this.price = price;
+                TimeStamp = timeStamp;
             }
 
-            public DateTime TimeStamp
-            {
-                get { return timeStamp; }
-            }
+            public DateTime TimeStamp { get; }
 
             /// <summary>
             /// Auction on which this bid has been placed
             /// </summary>
-            [DataMember]
-            public Auction Auction
+            public Auction GetAuction()
             {
-                get
-                {
-                    return auction;
-                }
+                return auction;
             }
             /// <summary>
             /// The user who placed the bid

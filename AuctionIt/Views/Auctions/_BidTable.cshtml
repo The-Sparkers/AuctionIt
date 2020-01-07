@@ -1,0 +1,29 @@
+﻿@model IEnumerable<AuctionIt.Models.Auction.Bid>
+@{ 
+    var index = Model.Count();
+}
+<div class="table-custom-responsive">
+    <table class="table-custom table-custom-striped table-custom-primary">
+        <thead>
+            <tr>
+                @*<th>#</th>*@
+                <th>Bidder</th>
+                <th>Bid</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @*<td>@(index--)</td>*@
+                    <td><h6 class="class="post-modern-link""><a href="@Url.Action("Detail","Users")">@*@item.Bidder.FullName*@ Bidder @index</a></h6></td>
+                    <td><h6>@AuctionIt.Common.Strings.CURRENCY_UNIT @item.Price</h6></td>
+                    <td><h6>@AuctionIt.Common.Functions.GetPassedTimeSpanFromNow(item.TimeStamp)</h6></td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>
+
