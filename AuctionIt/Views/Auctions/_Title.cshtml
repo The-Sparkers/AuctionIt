@@ -1,0 +1,42 @@
+﻿@model string
+
+@{
+    var title = Model;
+    string title1 = title, title2 = "";
+    var mid = title.Length / 2;
+    if (title.ToCharArray()[mid] == ' ')
+    {
+        title1 = title.Substring(0, mid + 1);
+        title2 = title.Substring(mid + 1, title.Length - (mid + 2));
+    }
+    else if (title.ToCharArray()[mid - 1] == ' ')
+    {
+        title1 = title.Substring(0, mid);
+        title2 = title.Substring(mid, title.Length - (mid + 1));
+    }
+    else
+    {
+        int j = mid;
+        for (int i = mid; (i < title.Length) || (j > 0); i++)
+        {
+            if (title.ToCharArray()[i] == ' ')
+            {
+                title1 = title.Substring(0, i + 1);
+                title2 = title.Substring(i + 1, title.Length - (i + 1));
+                break;
+            }
+            j--;
+            if (title.ToCharArray()[j] == ' ')
+            {
+                title1 = title.Substring(0, j + 1);
+                title2 = title.Substring(j + 1, title.Length - (j + 1));
+                break;
+            }
+        }
+    }
+}
+
+<h2 class="text-left text-sm-left">
+    @title1
+    <span class="h2-style">@title2</span>
+</h2>

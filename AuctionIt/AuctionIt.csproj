@@ -471,6 +471,8 @@
     <Content Include="Views\Auctions\_PostedBy.cshtml" />
     <Content Include="Views\Auctions\_BidTable.cshtml" />
     <Content Include="Views\Auctions\MyAdvertisements.cshtml" />
+    <Content Include="Views\Auctions\_Title.cshtml" />
+    <Content Include="Views\Auctions\_ProductDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
