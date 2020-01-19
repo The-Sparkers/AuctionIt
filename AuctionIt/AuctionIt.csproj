@@ -273,6 +273,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Common\Functions.cs" />
     <Compile Include="Common\Strings.cs" />
+    <Compile Include="Common\Validators.cs" />
     <Compile Include="Common\Values.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AuctionsController.cs" />
@@ -460,7 +461,6 @@
     <Content Include="Views\Shared\_AuctionThumbnail.cshtml" />
     <Content Include="Views\Shared\_FinishedAuctionThumbnail.cshtml" />
     <Content Include="Views\Auctions\Index.cshtml" />
-    <Content Include="Views\Account\Index.cshtml" />
     <Content Include="Views\Finance\Index.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
     <Content Include="Views\Auctions\_SearchBox.cshtml" />
