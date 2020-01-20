@@ -28,12 +28,8 @@ namespace AuctionIt.Controllers
 
         public ApplicationSignInManager SignInManager
         {
-            get {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set {
-                _signInManager = value;
-            }
+            get { return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>(); }
+            private set { _signInManager = value; }
         }
 
         public ApplicationUserManager UserManager
@@ -182,7 +178,6 @@ namespace AuctionIt.Controllers
         {
             return View();
         }
-
         //
         // POST: /Account/ForgotPassword
         [HttpPost]
@@ -192,7 +187,7 @@ namespace AuctionIt.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await UserManager.FindByNameAsync(model.Email);
+                var user = await UserManager.FindByNameAsync(model.Username);
                 if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
@@ -214,8 +209,9 @@ namespace AuctionIt.Controllers
         //
         // GET: /Account/ForgotPasswordConfirmation
         [AllowAnonymous]
-        public ActionResult ForgotPasswordConfirmation()
+        public ActionResult ForgotPasswordConfirmation(string email)
         {
+            ViewBag.Email = email;
             return View();
         }
 
@@ -238,7 +234,7 @@ namespace AuctionIt.Controllers
             {
                 return View(model);
             }
-            var user = await UserManager.FindByNameAsync(model.Email);
+            var user = await UserManager.FindByNameAsync(model.Username);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
@@ -275,7 +271,7 @@ namespace AuctionIt.Controllers
         //
         // GET: /Account/SendCode
         [AllowAnonymous]
-        public async Task<ActionResult> SendCode(string returnUrl, bool rememberMe)
+        public async Task<ActionResult> SendCode(string returnUrl, bool? rememberMe)
         {
             var userId = await SignInManager.GetVerifiedUserIdAsync();
             if (userId == null)
@@ -284,7 +280,7 @@ namespace AuctionIt.Controllers
             }
             var userFactors = await UserManager.GetValidTwoFactorProvidersAsync(userId);
             var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
-            return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
+            return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe??false });
         }
 
         //

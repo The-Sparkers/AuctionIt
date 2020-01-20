@@ -1,10 +1,14 @@
 ﻿@{
     ViewBag.Title = "Confirm Email";
 }
-
-<h2>@ViewBag.Title.</h2>
-<div>
-    <p>
-        Thank you for confirming your email. Please @Html.ActionLink("Click here to Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
-    </p>
-</div>
+<section class="section novi-bg novi-bg-img section-md bg-default text-center section-top-shadow">
+    <div class="container">
+        <h2>Account Verified</h2>
+        <h1><span class="fa fa-check-circle text-primary"></span></h1>
+        <div>
+            <p>
+                Thank you for confirming your email. Please @Html.ActionLink("Click here to Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
+            </p>
+        </div>
+    </div>
+</section>
