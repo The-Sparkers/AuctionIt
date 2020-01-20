@@ -1,0 +1,23 @@
+﻿@model AuctionIt.ViewModels.PostedByViewModel
+<div class="container">
+    <!--Seller Section-->
+    <div class="row">
+        <div class="col-md-12">
+            <h3>@Html.LabelFor(m => m.Name)</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <!--Profile Pic-->
+            <img src="@Url.Content(AuctionIt.Common.Strings.IMAGES_UPLOAD_PATH+Model.ProfilePic)" class="img-rounded" />
+        </div>
+        <div class="col-md-8">
+            <h2 class="text-left text-sm-left">
+                @Model.Name.FirstName
+                <span class="h2-style">@Model.Name.LastName</span>
+            </h2>
+            <h6 class="post-modern-link"><a href="@Url.Action("ViewByUser","Auctions",new { id=Model.Id})">More by this user</a></h6>
+        </div>
+    </div>
+
+</div>

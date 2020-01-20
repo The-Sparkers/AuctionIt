@@ -1,0 +1,93 @@
+﻿@model IEnumerable<AuctionIt.ViewModels.MyAdvertismentsViewModel>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="offset-md-10 col-md-2">
+            <div class="button button-icon button-icon-left button-ghost button-sm">
+                <span class="icon fa fa-plus"></span>
+                @Html.ActionLink("Create New", "Create", "Advertisements")
+            </div>
+            <br />
+        </div>
+        <div class="col-md-12">
+            <div class="table-custom-responsive">
+                <table class="table table-custom table-custom-secondary">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Title)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Image)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Category)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.PostedTime)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Status)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Title)
+                            </td>
+                            <td>
+                                <img src="@Url.Content(AuctionIt.Common.Strings.IMAGES_UPLOAD_PATH+item.Image)" class="img-thumbnail" />
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Category)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PostedTime)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Status)
+                            </td>
+                            <td>
+                                <div class="container">
+                                    <div class="group-sm">
+                                        <div class="button button-sm button-black">
+                                            <a href="@Url.Action("Details","Advertisements", new { id=item.Id})" title="Details"><span class="fa fa-info"></span></a>
+                                        </div>
+                                        |
+                                        <div class="button button-sm button-black">
+                                            <a href="@Url.Action("Delete","Advertisements", new { id=item.Id})" title="Delete"><span class="fa fa-trash"></span></a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Style{
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+}
+@section scripts{
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.table-custom').DataTable(
+
+            );
+        });
+    </script>
+}

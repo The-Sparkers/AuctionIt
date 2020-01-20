@@ -1,0 +1,63 @@
+﻿@model AuctionIt.ViewModels.FinishedAuctionItemDetailViewModel
+
+@{
+    ViewBag.Title = "Finished Details";
+    var bids = Model.Bids.OrderByDescending(x => x.TimeStamp).ToList();
+}
+<br />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-8">
+            @Html.Partial("_Title", Model.Title)
+        </div>
+        <div class="col-4">
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            @Html.Partial("_ProductDetails", Model.ProductDetails)
+        </div>
+        <div class="col-md-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!--Price Section-->
+                        <p>
+                            <h5 class="text-black">Closed Price:</h5>
+                            <h2 class="text-left text-sm-left">
+                                @AuctionIt.Common.Strings.CURRENCY_UNIT
+                                <span class="h2-style">@Model.HighestBid</span>
+                            </h2>
+                            <h5 class="text-left text-sm-left">
+                                @Html.LabelFor(m => m.ActualPrice)
+                                <span class="h2-style">@AuctionIt.Common.Strings.CURRENCY_UNIT @Model.ActualPrice</span>
+                            </h5>
+                            <h5 class="text-left text-sm-left">
+                                @Html.LabelFor(m => m.StartingTime)
+                                <span class="h2-style">@Model.StartingTime</span>
+                            </h5>
+                            <a class="button button-box-right button-primary button-primary" href="#">
+                                Closed @Model.EndingTime
+                                <div class="button-box">
+                                    <div class="button-box-text">X</div>
+                                    <div class="button-box-count">@Model.Bids.Count</div>
+                                </div>
+                            </a>
+                        </p>
+                    </div>
+                    <div class="col-md-12">
+                        <!--Top 5 Bids History Section-->
+                        <h3>Top 5 Bids</h3>
+                        @Html.Partial("_BidTable", Model.Bids.Take(5))
+                    </div>
+                    <div class="col-md-12">
+                        @Html.Partial("_PostedBy", Model.PostedBy)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,38 @@
+﻿@model AuctionIt.ViewModels.ProductDetailsViewModel
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <!--Images Section-->
+                <img src="@Url.Content(AuctionIt.Common.Strings.IMAGES_UPLOAD_PATH+Model.Images[0])" class="img-responsive" />
+            </div>
+            <div class="col-md-12">
+                <!--Details Section-->
+
+                <h3>Details</h3>
+                <div class="container grid-demo grid-demo-underlined">
+                    <div class="row">
+                        <!--Additional Attributes Section-->
+                        @foreach (var item in Model.Attributes)
+                        {
+                            <div class="col-md-4">
+                                <h5 class="text-center text-sm-center">
+                                    @item.Name:
+                                    <span class="h2-style">@item.Value</span>
+                                </h5>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <h3>Description</h3>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-xl-12">
+                            <p>
+                                @Model.Description
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

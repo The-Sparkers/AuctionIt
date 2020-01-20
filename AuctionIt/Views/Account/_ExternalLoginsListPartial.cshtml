@@ -1,0 +1,32 @@
+﻿@model AuctionIt.ViewModels.ExternalLoginListViewModel
+@using Microsoft.Owin.Security
+
+@{
+    var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+    if (loginProviders.Count() > 0)
+    {
+        using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = Model.ReturnUrl }))
+        {
+            @Html.AntiForgeryToken()
+            foreach (AuthenticationDescription p in loginProviders)
+            {
+                if (p.Caption.ToLower().Contains("facebook"))
+                {
+                    <button type="submit" class="button button-facebook button-icon button-icon-left button-round" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><span class="icon fa fa-facebook"></span>@p.AuthenticationType</button>
+                }
+                else if (p.Caption.ToLower().Contains("google"))
+                {
+                    <button type="submit" class="button button-google button-icon button-icon-left button-round" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><span class="icon fa fa-google-plus"></span>@p.AuthenticationType</button>
+                }
+                else if (p.Caption.ToLower().Contains("twitter"))
+                {
+                    <button type="submit" class="button button-twitter button-icon button-icon-left button-round" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><span class="icon fa fa-twitter"></span>@p.AuthenticationType</button>
+                }
+                else
+                {
+                    <button type="submit" class="button button-primary button-icon button-icon-left button-round" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><span class="icon fa fa-globe"></span>@p.AuthenticationType</button>
+                }
+            }
+        }
+    }
+}

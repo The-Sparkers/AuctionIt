@@ -1,0 +1,18 @@
+﻿@model AuctionIt.ViewModels.FinishedAuctionViewModel
+
+<div class="col-lg-3 col-sm-6">
+    <!-- Post Classic-->
+    <div class="post-classic">
+        <div class="post-classic-badge">
+            Closed price
+            <div class="post-classic-price-value">@Model.Price</div>
+        </div>
+        <div class="post-classic-thumbnail">
+            <figure class="post-classic-figure">
+                <img src="@Url.Content(AuctionIt.Common.Strings.IMAGES_UPLOAD_PATH+Model.Image)" alt="@Model.Name" width="270" height="135" />
+            </figure>
+            <div class="post-classic-caption"><a class="heading-5" href="@Url.Action("FinishedDetails","Auctions",Model.Id)">@Model.Name</a></div>
+        </div>
+    </div>
+</div>
+

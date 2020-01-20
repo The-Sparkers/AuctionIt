@@ -1,0 +1,25 @@
+﻿@model AuctionIt.ViewModels.IndexSearchViewModel
+@{
+    List<SelectListItem> categoriesList = new List<SelectListItem>();
+    categoriesList.Add(new SelectListItem
+    {
+        Text = "Mobiles",
+        Value = "1"
+    });
+    categoriesList.Add(new SelectListItem
+    {
+        Text = "Cars",
+        Value = "2"
+    });
+
+}
+@using (Html.BeginForm("Index", "Auctions", FormMethod.Post, new { @class = "rd-form rd-mailform rd-form-inline" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.DropDownListFor(m => m.CategoryId, categoriesList, "Any", new { @class = "form-input" })
+    @Html.EnumDropDownListFor(m => m.BidRange, new { @class = "form-input" })
+    @Html.EnumDropDownListFor(m => m.EndingPeriod, new { @class = "form-input" })
+    <div class="form-button">
+        <button class="button button-primary" type="submit">Search</button>
+    </div>
+}

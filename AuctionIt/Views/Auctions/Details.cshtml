@@ -1,0 +1,95 @@
+﻿@model AuctionIt.ViewModels.AuctionDetailsViewModel
+
+@{
+    ViewBag.Title = "Details";
+
+
+}
+<br />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-8">
+            @Html.Partial("_Title", Model.Title)
+        </div>
+        <div class="col-4">
+            <h4 class="countdown" data-format="HMS" data-until="+@Model.RemainingTime.TotalSeconds"></h4>
+            <h4 class="text-left text-sm-left">
+                <span class="h2-style"><span class="icon mdi mdi-watch"></span> to End</span>
+            </h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            @Html.Partial("_ProductDetails", Model.ProductDetails)
+        </div>
+        <div class="col-md-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!--Price Section-->
+                        <p>
+                            <h5 class="text-black">Current Bid:</h5>
+                            <h2 class="text-left text-sm-left">
+                                @AuctionIt.Common.Strings.CURRENCY_UNIT
+                                <span class="h2-style">@Model.HighestBid</span>
+                                @if (!Model.IsFavorite)
+                                {
+                                    <a class="button-icon button-icon-left button-sm post-modern-link text-primary" href="@Url.Action("AddToInterest","Auctions",new { id=Model.AuctionId})">
+                                        <span class="icon fa fa-heart-o" id="fav"></span>
+
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="button-icon button-icon-left button-sm post-modern-link text-primary" href="@Url.Action("AddToInterest","Auctions",new { id=Model.AuctionId})">
+                                        <span class="icon fa fa-heart" id="fav"></span>
+
+                                    </a>
+                                }
+                            </h2>
+                            <h5 class="text-left text-sm-left">
+                                @Html.LabelFor(m => m.ActualPrice)
+                                <span class="h2-style">@AuctionIt.Common.Strings.CURRENCY_UNIT @Model.ActualPrice</span>
+                            </h5>
+                            <br />
+                            <a class="button button-box-right button-primary" href="@Url.Action("PlaceBid","Auction", new { id=Model.AuctionId })">
+                                Place a bid
+                                <div class="button-box">
+                                    <div class="button-box-text">X</div>
+                                    <div class="button-box-count">@Model.NumberOfBids</div>
+                                </div>
+                            </a>
+                        </p>
+                    </div>
+                    <div class="col-md-12">
+                        @Html.Partial("_PostedBy", Model.PostedBy)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        //function for the animation of the fav button
+        $(document).ready(function () {
+            $(".fa-heart-o").mouseover(function () {
+                $("#fav").removeClass("fa-heart-o");
+                $("#fav").addClass("fa-heart");
+            });
+            $(".fa-heart-o").mouseout(function () {
+                $("#fav").removeClass("fa-heart");
+                $("#fav").addClass("fa-heart-o");
+            });
+            $(".fa-heart").mouseover(function () {
+                $("#fav").removeClass("fa-heart");
+                $("#fav").addClass("fa-heart-o");
+            });
+            $(".fa-heart").mouseout(function () {
+                $("#fav").removeClass("fa-heart-o");
+                $("#fav").addClass("fa-heart");
+            });
+        });
+    </script>
+}

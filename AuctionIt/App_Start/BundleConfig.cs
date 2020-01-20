@@ -20,9 +20,14 @@ namespace AuctionIt
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/siteJS").Include(
+                "~/Scripts/core.min.js",
+                "~/Scripts/script.js"));
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+                      "~/Content/style.css",
+                      "~/Content/fonts.css"));
         }
     }
 }

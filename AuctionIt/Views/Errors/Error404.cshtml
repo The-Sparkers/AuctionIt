@@ -1,0 +1,42 @@
+﻿@{
+    ViewBag.Title = "404";
+}
+<section class="section novi-bd novi-bg-img section-lg text-center bg-primary">
+    <div class="container">
+        <div class="row row-50 row-fix justify-content-center">
+            <div class="col-lg-7 col-md-8 col-sm-10">
+                <h1>404</h1>
+                <h2>Sorry, page not found!</h2>
+                <p class="text-black">The page you are looking for might have been removed, <br> had its name changed, or is temporarily unavailable.</p>
+                <p class="text-black">Please try using our search box below to look for <br> information on the website</p>
+            </div>
+            <div class="col-lg-7 col-md-8 col-sm-10">
+                <!--RD Search-->
+                <form class="rd-form rd-search rd-search-404" action="search-results.html" method="GET">
+                    <div class="form-wrap">
+                        <label class="form-label rd-input-label" for="rd-search-form-input">Search</label>
+                        <input class="form-input" id="rd-search-form-input" type="text" name="s" autocomplete="off">
+                        <button class="icon linearicons-magnifier" type="submit"></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Style{
+    <!--Styling file for Jquery Auto-Complete-->
+    <link href="~/Content/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+}
+@section scripts{
+    <!--Script for Jquery Auto-Complete-->
+    <script src="~/Scripts/jquery-ui.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#rd-search-form-input").autocomplete({
+                source: '@Url.Action("GetTagsForAutoComplete", "Home")'
+            });
+        });
+    </script>
+}
