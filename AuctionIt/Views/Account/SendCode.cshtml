@@ -1,0 +1,35 @@
+﻿@model AuctionIt.ViewModels.SendCodeViewModel
+@{
+    ViewBag.Title = "Send Verification Code";
+}
+<section class="section novi-bg novi-bg-img section-md bg-default text-center section-top-shadow">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-9 col-lg-7 col-xl-5">
+                <h3>@ViewBag.Title</h3>
+                @using (Html.BeginForm("SendCode", "Account", new { ReturnUrl = Model.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.Hidden("rememberMe", @Model.RememberMe)
+                    @Html.ValidationSummary(true, "", new { @class = "text-black" })
+                    <div class="row row-30">
+                        <div class="col-md-8">
+                            Select Two-Factor Authentication Provider:
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-wrap">
+                                @Html.DropDownListFor(model => model.SelectedProvider, Model.Providers)
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <button class="button button-block button-primary" type="submit">Submit</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

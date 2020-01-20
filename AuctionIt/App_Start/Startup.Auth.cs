@@ -1,10 +1,11 @@
-﻿using System;
+﻿using AuctionIt.ASPNetIdentity;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.Google;
 using Owin;
-using AuctionIt.ASPNetIdentity;
+using System;
 
 namespace AuctionIt
 {
@@ -53,15 +54,15 @@ namespace AuctionIt
             //   consumerKey: "",
             //   consumerSecret: "");
 
-            //app.UseFacebookAuthentication(
-            //   appId: "851021305095066",
-            //   appSecret: "4026d6e7c1ff0710b75f39946360c726");
+            app.UseFacebookAuthentication(
+               appId: "1010366876012363",
+               appSecret: "4026d6e7c1ff0710b75f39946360c726");
 
-            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            //{
-            //    ClientId = "644748381420-nv15j4cg7kjap8tja5ln154cci8m6rlf.apps.googleusercontent.com",
-            //    ClientSecret = "JUXAs8zxwLMOs5UnGs5NirZL"
-            //});
+            app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+            {
+                ClientId = "262939801884-gjb4fsk5p89dlij11jda79dh2iojfmdb.apps.googleusercontent.com",
+                ClientSecret = "YoLRMeryOb1d3nh9OAYha-ob"
+            });
         }
     }
 }

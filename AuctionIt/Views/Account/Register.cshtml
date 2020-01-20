@@ -1,0 +1,114 @@
+﻿@model AuctionIt.ViewModels.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+    List<SelectListItem> cities = new List<SelectListItem>();
+    AuctionIt.Common.Values.CITIES.ForEach(city => cities.Add(new SelectListItem
+    {
+        Text = city,
+        Value = city
+    }));
+}
+
+<section class="section novi-bg novi-bg-img section-md bg-default text-center section-top-shadow">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-9 col-lg-7 col-xl-5">
+                <h3>@ViewBag.Title</h3>
+                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "rd-form rd-mailform rd-form-centered", role = "form", novalidate = "novalidate" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-black" })
+                    <div class="row row-30">
+                        <div class="col-md-6">
+                            <div class="form-wrap">
+                                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-input form-control-has-validation", type = "text", @data_constraints = "@Required" })
+
+                                @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "form-validation" })
+                                @Html.LabelFor(m => m.FirstName, new { @class = "form-label rd-input-label" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-wrap">
+                                @Html.TextBoxFor(m => m.LastName, new { @class = "form-input form-control-has-validation", type = "text", @data_constraints = "@Required" })
+
+                                @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "form-validation" })
+                                @Html.LabelFor(m => m.LastName, new { @class = "form-label rd-input-label" })
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-wrap">
+                                @Html.TextBoxFor(m => m.CNIC, new { @class = "form-input form-control-has-validation", type = "text", @data_constraints = "@Required" })
+
+                                @Html.ValidationMessageFor(m => m.CNIC, "", new { @class = "form-validation" })
+                                @Html.LabelFor(m => m.CNIC, new { @class = "form-label rd-input-label" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-wrap">
+                                @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-input form-control-has-validation", type = "text", @data_constraints = "@Required" })
+
+                                @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "form-validation" })
+                                @Html.LabelFor(m => m.PhoneNumber, new { @class = "form-label rd-input-label" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-wrap">
+                                @Html.DropDownListFor(m => m.City, cities, "Select City", new { @class = "form-input form-control-has-validation dropdown dropdown-menu", type = "text", @data_constraints = "@Required" })
+
+                                @Html.ValidationMessageFor(m => m.City, "", new { @class = "form-validation" })
+
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-wrap">
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-input form-control-has-validation", type = "Email", @data_constraints = "@Email @Required" })
+
+                                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "form-validation" })
+                                @Html.LabelFor(m => m.Email, new { @class = "form-label rd-input-label" })
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-wrap">
+                                @Html.TextBoxFor(m => m.Username, new { @class = "form-input form-control-has-validation", type = "text", @data_constraints = "@Required" })
+
+                                @Html.ValidationMessageFor(m => m.Username, "", new { @class = "form-validation" })
+                                @Html.LabelFor(m => m.Username, new { @class = "form-label rd-input-label" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-wrap">
+                                @Html.PasswordFor(m => m.Password, new { @class = "form-input form-control-has-validation", data_constraints = "@Required" })
+
+                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "form-validation" })
+                                @Html.LabelFor(m => m.Password, new { @class = "form-label rd-input-label" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-wrap">
+                                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-input form-control-has-validation", data_constraints = "@Required" })
+
+                                @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "form-validation" })
+                                @Html.LabelFor(m => m.ConfirmPassword, new { @class = "form-label rd-input-label" })
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <button class="button button-block button-primary" type="submit">@ViewBag.Title</button>
+                        </div>
+                        <div class="col-md-12">
+                            <p>
+                                By clicking this, you are accepting our @Html.ActionLink("Terms & Conditions", "TermsNConditions", "Home")<text>.</text>
+                            </p>
+                        </div>
+
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -24,3 +24,19 @@
     </div>
 </section>
 
+
+@section Style{
+    <!--Styling file for Jquery Auto-Complete-->
+    <link href="~/Content/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+}
+@section scripts{
+    <!--Script for Jquery Auto-Complete-->
+    <script src="~/Scripts/jquery-ui.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#rd-search-form-input").autocomplete({
+                source: '@Url.Action("GetTagsForAutoComplete", "Home")'
+            });
+        });
+    </script>
+}

@@ -196,7 +196,11 @@ namespace AuctionIt.Controllers
                     ActualPrice = 2000,
                     AdId = 1,
                     AuctionId = 1,
-                    Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam consectetur velit eget turpis elementum consequat. Curabitur lectus sapien, porta eget turpis quis, interdum consectetur orci. Aenean in lorem consequat, feugiat eros in, iaculis purus. Vivamus accumsan augue in urna molestie facilisis. Donec dolor eros, iaculis a condimentum imperdiet, hendrerit et leo. Vivamus dignissim fringilla volutpat. Sed imperdiet mi eget libero molestie, vitae tempor erat pharetra. Ut metus neque, luctus iaculis eros vitae, dignissim auctor elit. Integer vel tellus tincidunt, fermentum lacus non, fringilla nisi. Ut eget mattis lorem, sit amet blandit risus. Nullam vitae est elit. Donec ipsum ex, vestibulum vel augue et, euismod cursus est. Pellentesque facilisis libero urna, ut tristique tellus porttitor at.",
+                    ProductDetails = new ProductDetailsViewModel
+                    {
+                        Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam consectetur velit eget turpis elementum consequat. Curabitur lectus sapien, porta eget turpis quis, interdum consectetur orci. Aenean in lorem consequat, feugiat eros in, iaculis purus. Vivamus accumsan augue in urna molestie facilisis. Donec dolor eros, iaculis a condimentum imperdiet, hendrerit et leo. Vivamus dignissim fringilla volutpat. Sed imperdiet mi eget libero molestie, vitae tempor erat pharetra. Ut metus neque, luctus iaculis eros vitae, dignissim auctor elit. Integer vel tellus tincidunt, fermentum lacus non, fringilla nisi. Ut eget mattis lorem, sit amet blandit risus. Nullam vitae est elit. Donec ipsum ex, vestibulum vel augue et, euismod cursus est. Pellentesque facilisis libero urna, ut tristique tellus porttitor at."
+
+                    },
                     HighestBid = 4000,
                     PostedBy = new PostedByViewModel
                     {
@@ -209,25 +213,25 @@ namespace AuctionIt.Controllers
                     NumberOfBids = 10,
                     RemainingTime = TimeSpan.FromMinutes(30.4)
                 };
-                model.Images.Add("page1_pic6-270x217.jpg");
-                model.Images.Add("page1_pic7-270x217.jpg");
-                model.Images.Add("page1_pic8-270x217.jpg");
-                model.Attributes.Add(new ViewModels.Attribute
+                model.ProductDetails.Images.Add("page1_pic6-270x217.jpg");
+                model.ProductDetails.Images.Add("page1_pic7-270x217.jpg");
+                model.ProductDetails.Images.Add("page1_pic8-270x217.jpg");
+                model.ProductDetails.Attributes.Add(new ViewModels.Attribute
                 {
                     Name = "Brand",
                     Value = "Levis"
                 });
-                model.Attributes.Add(new ViewModels.Attribute
+                model.ProductDetails.Attributes.Add(new ViewModels.Attribute
                 {
                     Name = "Color",
                     Value = "Blue"
                 });
-                model.Attributes.Add(new ViewModels.Attribute
+                model.ProductDetails.Attributes.Add(new ViewModels.Attribute
                 {
                     Name = "Condition",
                     Value = "New"
                 });
-                model.Attributes.Add(new ViewModels.Attribute
+                model.ProductDetails.Attributes.Add(new ViewModels.Attribute
                 {
                     Name = "Lorem",
                     Value = "Ipsum"
@@ -389,17 +393,19 @@ namespace AuctionIt.Controllers
                         AdId = 1,
                         AuctionId = 101,
                         Bids = new List<Auction.Bid>(),
-                        Description = "Lorem ipsum dolor sit amet, consectetur " +
+                        ProductDetails = new ProductDetailsViewModel
+                        {
+                            Description = "Lorem ipsum dolor sit amet, consectetur " +
                         "adipiscing elit. Nulla sodales porta diam a vulputate. " +
                         "Etiam vitae varius mi. Curabitur arcu libero, efficitur vitae ornare in, " +
                         "ullamcorper a sapien. In volutpat varius dui, ac tempus enim pretium sed. " +
                         "Phasellus molestie convallis lorem, viverra pharetra felis bibendum at. " +
                         "Proin eros eros, facilisis non dignissim hendrerit, " +
                         "faucibus sit amet nunc. Vestibulum id porttitor leo, et facilisis urna. " +
-                        "Curabitur ac malesuada diam. Ut volutpat felis vel lacus vehicula aliquet.",
+                        "Curabitur ac malesuada diam. Ut volutpat felis vel lacus vehicula aliquet."
+                        },
                         EndingTime = Common.Functions.GetPassedTimeSpanFromNow(new DateTime(2020, 1, 6)),
                         HighestBid = 4000,
-                        Images = new List<string>(),
                         PostedBy = new PostedByViewModel
                         {
                             Id = 10,
@@ -417,14 +423,14 @@ namespace AuctionIt.Controllers
                     model.Bids.Add(new Auction.Bid(null, null, 3500, new DateTime(2020, 1, 5, 6, 8, 0, 0)));
                     model.Bids.Add(new Auction.Bid(null, null, 4000, new DateTime(2020, 1, 6, 5, 18, 0, 0)));
                     model.Bids = model.Bids.OrderByDescending(x => x.Price).ToList();
-                    model.Images.Add("page1_pic7-270x217.jpg");
-                    model.Images.Add("page1_pic8-270x217.jpg");
-                    model.Attributes.Add(new ViewModels.Attribute
+                    model.ProductDetails.Images.Add("page1_pic7-270x217.jpg");
+                    model.ProductDetails.Images.Add("page1_pic8-270x217.jpg");
+                    model.ProductDetails.Attributes.Add(new ViewModels.Attribute
                     {
                         Name = "Fusce auctor",
                         Value = "ipsum id"
                     });
-                    model.Attributes.Add(new ViewModels.Attribute
+                    model.ProductDetails.Attributes.Add(new ViewModels.Attribute
                     {
                         Name = "Donec tempor",
                         Value = "ex eget"
@@ -452,7 +458,7 @@ namespace AuctionIt.Controllers
                         Image = "page1_pic2-270x271.jpg",
                         PostedTime = Common.Functions.GetPassedTimeSpanFromNow(new DateTime(2020, 1, 6)),
                         Status = isSold?"Sold":(isVerified?"Verified":((isEnded||isClosed)?"Rejected":"Pending")),
-                         Title="Lorem Ipsum Dolor"
+                        Title="Lorem Ipsum Dolor"
                     },
                     new MyAdvertismentsViewModel
                     {
@@ -470,6 +476,16 @@ namespace AuctionIt.Controllers
             {
                 return RedirectToAction("Error500", "Errors", new { message = ex.Message });
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">primary key of the auction</param>
+        /// <returns></returns>
+        public ActionResult PlaceBid(long id)
+        {
+            return View();
         }
     }
 }
