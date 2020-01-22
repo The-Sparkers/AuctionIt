@@ -57,17 +57,13 @@
                                 @Html.DisplayFor(modelItem => item.Status)
                             </td>
                             <td>
-                                <div class="container">
-                                    <div class="group-sm">
-                                        <div class="button button-sm button-black">
-                                            <a href="@Url.Action("Details","Advertisements", new { id=item.Id})" title="Details"><span class="fa fa-info"></span></a>
-                                        </div>
-                                        |
-                                        <div class="button button-sm button-black">
-                                            <a href="@Url.Action("Delete","Advertisements", new { id=item.Id})" title="Delete"><span class="fa fa-trash"></span></a>
-                                        </div>
-                                    </div>
-                                </div>
+                                <p>
+                                    <a href="@Url.Action("Details","Advertisements", new { id=item.Id})" title="Details"><span class="fa fa-info"></span></a>
+
+                                    |
+                                    <a href="@Url.Action("Delete","Advertisements", new { id=item.Id})" title="Delete"><span class="fa fa-trash"></span></a>
+
+                                </p>
 
                             </td>
                         </tr>

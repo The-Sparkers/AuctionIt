@@ -1,9 +1,15 @@
 ﻿using AuctionIt.ASPNetIdentity;
 using AuctionIt.ViewModels;
+using ImageMagick;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using Newtonsoft.Json.Linq;
+using RestSharp;
+using System;
 using System.Linq;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -15,9 +21,27 @@ namespace AuctionIt.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private Thread compressImageThread;
+        private readonly Thread imageCheckThread;
 
         public AccountController()
         {
+        }
+        [AllowAnonymous]
+        public ActionResult Index()
+        {
+            ProfileDetailsViewModel model = new ProfileDetailsViewModel
+            {
+                CNIC = "35202-8448219-9",
+                Email = "umair.tahir@gmail.com",
+                FirstName = "Umair",
+                Id = 1,
+                LastName = "Tahir",
+                PhoneNumber = "0307-4172327",
+                ProfilePic = "team-01-270x270.jpg",
+                Username = "ut123"
+            };
+            return View(model);
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
@@ -28,14 +52,30 @@ namespace AuctionIt.Controllers
 
         public ApplicationSignInManager SignInManager
         {
-            get { return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>(); }
-            private set { _signInManager = value; }
+            get
+            {
+                string s = string.Empty;
+                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                string s = string.Empty;
+                _signInManager = value;
+            }
         }
 
         public ApplicationUserManager UserManager
         {
-            get { return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>(); }
-            private set { _userManager = value; }
+            get
+            {
+                string s = string.Empty;
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                string s = string.Empty;
+                _userManager = value;
+            }
         }
 
         //
@@ -222,7 +262,124 @@ namespace AuctionIt.Controllers
         {
             return code == null ? View("Error") : View();
         }
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ChangePasswordAsync(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+            var user = User;
+            var result = await UserManager.ChangePasswordAsync(user.Identity.GetUserId(), model.OldPassword, model.Password);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("ResetPasswordConfirmation");
+            }
+            else
+            {
+                return View("Error");
+            }
+        }
+        [AllowAnonymous]
+        public ActionResult UpdateProfileImage()
+        {
+            ViewBag.I = "team-01-270x270.jpg";
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
+        public ActionResult UpdateProfileImage(UpdateProfileViewModel model)
+        {
+            if (model.File != null)
+            {
+                if (model.File.ContentType.ToLower().Contains("image"))
+                {
+                    string pic = Guid.NewGuid().ToString() + System.IO.Path.GetFileName(model.File.FileName);
+                    string path = System.IO.Path.Combine(
+                                           Server.MapPath(Common.Strings.IMAGES_UPLOAD_PATH), pic);
+                    //try
+                    //{
+                    //    Models.User.GetUser(User.Identity.GetUserId()).ProfilePic = new Models.Common.Image
+                    //    {
+                    //        FileName = pic
+                    //    };
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    return RedirectToAction("Error500", "Errors", new { message = ex.Message });
+                    //}
+                    // file is uploaded
+                    model.File.SaveAs(path);
+                    //compress the image
+                    compressImageThread = new Thread(new ThreadStart(() => CompressImage(path, pic)));
+                    compressImageThread.Start();
+                }
+                else
+                {
+                    return RedirectToAction("Error500", "Errors", new { message = "The file uploaded was not an image file" });
+                }
+            }
+            else
+            {
+                return View("Error");
+            }
+            return View();
+        }
+        private void InApropriateImageCheck(string imageName)
+        {
+            RestClient client = new RestClient("https://macgyverapi-nudity-detection-v1.p.rapidapi.com/");
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("x-rapidapi-host", "macgyverapi-nudity-detection-v1.p.rapidapi.com");
+            request.AddHeader("x-rapidapi-key", "a2f7427acemshbf129c5038a3950p1aff46jsn35496e59801d");
+            request.AddHeader("content-type", "application/json");
+            request.AddHeader("accept", "application/json");
+            var imagePhysicalPath = Common.Functions.ResolveServerUrl(VirtualPathUtility.ToAbsolute(Common.Strings.IMAGES_UPLOAD_PATH + imageName), Request.Url, false);
+            request.AddParameter("application/json", "{    \"key\": \"free\",    \"id\": \"8E5q5T2p\",    \"data\": {        \"image\": \"" + imagePhysicalPath + "\"    }}", ParameterType.RequestBody);
+            IRestResponse response = client.Execute(request);
+            if (response.ResponseStatus == ResponseStatus.Completed)
+            {
+                JObject json = JObject.Parse(response.Content);
+                decimal trueProb = Convert.ToDecimal(json["true"]);
+                decimal falseProb = Convert.ToDecimal(json["false"]);
+                try
+                {
+                    if ((falseProb / trueProb) * 100.00m < 50)
+                    {
+                        ReplaceImageWithDefault(imageName);
+                    }
+                }
+                catch (DivideByZeroException)
+                {
+                    ReplaceImageWithDefault(imageName);
 
+                }
+            }
+        }
+
+        private void ReplaceImageWithDefault(string imageName)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void CompressImage(string path, string imageName)
+        {
+            using (MagickImage image = new MagickImage(path))
+            {
+                image.Resize(270, 270);
+                image.Quality = 50;
+                image.Write(path);
+            }
+            //InApropriateImageCheck(imageName);
+#pragma warning disable CS0618 // Type or member is obsolete
+            compressImageThread.Suspend();
+#pragma warning restore CS0618 // Type or member is obsolete
+        }
         //
         // POST: /Account/ResetPassword
         [HttpPost]
@@ -280,7 +437,7 @@ namespace AuctionIt.Controllers
             }
             var userFactors = await UserManager.GetValidTwoFactorProvidersAsync(userId);
             var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
-            return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe??false });
+            return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe ?? false });
         }
 
         //

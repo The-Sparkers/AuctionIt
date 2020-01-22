@@ -1,0 +1,81 @@
+﻿@model AuctionIt.ViewModels.UpdateProfileViewModel
+
+@{
+    ViewBag.Title = "Update Profile Picture";
+    string previousImage = ViewBag.I;
+}
+
+<section class="section novi-bg novi-bg-img section-md bg-default text-center section-top-shadow">
+    <div class="container">
+        <div class="row row50 justify-content-center">
+            <div class="col-md-9 col-lg-7 col-xl-5">
+                <div class="row">
+                    <div class="col-md-4" id="list">
+                        <img src="@Url.Content(AuctionIt.Common.Strings.IMAGES_UPLOAD_PATH+previousImage)" class="img-rounded rounded-circle" />
+                    </div>
+                    <div class="col-md-8">
+                        <div class="container">
+                            @using (Html.BeginForm("UpdateProfileImage", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-black" })
+                                <div class="row row-30">
+                                    <div class="col-md-12">
+                                        <div class="form-wrap">
+                                            <input type="file" id="file" name="file" class="button button-sm button-secondary" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <button class="button button-block button-primary" type="submit">Upload</button>
+                                    </div>
+
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+@section scripts{
+    <script type="text/javascript">
+        function handleFileSelect(evt) {
+            var files = evt.target.files; // FileList object
+
+            // Loop through the FileList and render image files as thumbnails.
+            for (var i = 0, f; f = files[i]; i++) {
+
+                // Only process image files.
+                if (!f.type.match('image.*')) {
+                    continue;
+                }
+
+                var reader = new FileReader();
+
+                // Closure to capture the file information.
+                reader.onload = (function (theFile) {
+                    return function (e) {
+                        // Render thumbnail.
+                        var span = document.createElement('span');
+                        span.innerHTML = ['<img class="img-responsive rounded-circle" src="', e.target.result,
+                            '" title="', escape(theFile.name), '"/>'
+                        ].join('');
+                        document.getElementById('list').innerHTML = span.innerHTML;
+                    };
+                })(f);
+
+                // Read in the image file as a data URL.
+                reader.readAsDataURL(f);
+            }
+        }
+
+        document.getElementById('file').addEventListener('change', handleFileSelect, false);
+    </script>
+}
+

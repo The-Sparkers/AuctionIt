@@ -1,0 +1,43 @@
+﻿@model AuctionIt.ViewModels.ProfileDetailsViewModel
+
+@{
+    ViewBag.Title = "Profile Details";
+}
+<section class="section novi-bg novi-bg-img section-md bg-default text-center section-top-shadow">
+    <div class="container">
+        <div class="row row50 justify-content-center">
+            <div class="col-md-9 col-lg-7 col-xl-5">
+                <div class="row">
+                    <div class="col-md-4">
+                        <img src="@Url.Content(AuctionIt.Common.Strings.IMAGES_UPLOAD_PATH+Model.ProfilePic)" class="img-rounded rounded-circle" />
+                        <a class="button button-sm button-primary" href="@Url.Action("UpdateProfileImage")">Update</a>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h2 class="text-center text-capitalize text-sm-left">@Model.FirstName <span class="h2-style">@Model.LastName</span><a class="button button-ghost button-sm button-icon" href="@Url.Action("Edit")" title="Edit"><span class="icon fa fa-edit"></span></a></h2>
+                                </div>
+                                <div class="col-md-12">
+                                    <h6 class="text-center text-sm-left">@Html.DisplayNameFor(m => m.CNIC): <span class="h2-style">@Model.CNIC</span></h6>
+                                </div>
+                                <div class="col-md-12">
+                                    <h6 class="text-center text-sm-left">@Html.DisplayNameFor(m => m.PhoneNumber): <span class="h2-style">@Model.PhoneNumber</span></h6>
+                                </div>
+                                <div class="col-md-12">
+                                    <h6 class="text-center text-sm-left">@Html.DisplayNameFor(m => m.Email): <span class="h2-style">@Model.Email</span></h6>
+                                </div>
+                                <div class="col-md-12">
+                                    <h6 class="text-center text-sm-left">@Html.DisplayNameFor(m => m.Username): <span class="h2-style">@Model.Username</span></h6>
+                                </div>
+                                <div class="col-md-12">
+                                    [<a href="@Url.Action("ChangePassword")" class="text-underline">Reset Password</a>]
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

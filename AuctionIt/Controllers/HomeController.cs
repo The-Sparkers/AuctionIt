@@ -125,7 +125,10 @@ namespace AuctionIt.Controllers
             model.FinishedAuctions = finishedAuctionsModel;
             return View(model);
         }
-
+        public ActionResult TermsNConditions()
+        {
+            return View();
+        }
         public JsonResult GetTagsForAutoComplete(string term)
         {
             try

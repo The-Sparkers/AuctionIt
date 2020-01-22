@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace AuctionIt.Common
 {
@@ -64,6 +61,18 @@ namespace AuctionIt.Common
                 s = days + " days ago";
             }
             return s;
+        }
+        public static string ResolveServerUrl(string serverUrl,Uri originalUri,bool forceHttps)
+        {
+            if (serverUrl.IndexOf("://") > -1)
+            {
+                return serverUrl;
+            }
+
+            string newUrl = serverUrl;
+            newUrl = (forceHttps ? "https" : originalUri.Scheme) +
+                "://" + originalUri.Authority + newUrl;
+            return newUrl;
         }
     }
 }
