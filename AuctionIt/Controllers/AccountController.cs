@@ -22,7 +22,6 @@ namespace AuctionIt.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private Thread compressImageThread;
-        private readonly Thread imageCheckThread;
 
         public AccountController()
         {

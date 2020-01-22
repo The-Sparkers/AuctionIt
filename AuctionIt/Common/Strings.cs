@@ -9,5 +9,9 @@
         public static readonly string PAYPAL_SECRET_KEY = "EIMqnLnaAg8qFaxBxK9OHNTkDiigJzqWt94v4hhAnkzlo-AZ8_FlQnNIcK7cPFqNaxfq8MnAPKkFabrl";
         public static readonly string PAYPAL_SANDBOX_ACCOUNT = "sb-jlk43e928916@business.example.com";
         public static readonly string PAYPAT_AUTH_TOKEN = "access_token$sandbox$bmjn9pzj55kdbbkv$9679ec4da0303504dc7c6af1b59a3680";
+        public static readonly string CURRENCY_CONVERTER_KEY = "0922005b5fac5f3eaeda";
+        public static readonly string PKR_USD_EXCHANGE_RATE_API_URL = "http://free.currconv.com/api/v7/convert?q=PKR_USD&compact=ultra&apiKey=0922005b5fac5f3eaeda";
+        public static readonly string USD_PKR_EXCHANGE_RATE_API_URL = "http://free.currconv.com/api/v7/convert?q=USD_PKR&compact=ultra&apiKey=0922005b5fac5f3eaeda";
+        
     }
 }

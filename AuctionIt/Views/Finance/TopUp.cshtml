@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "Online Top-Up";
+    string paypalSDKUrl = "https://www.paypal.com/sdk/js?client-id=" + AuctionIt.Common.Strings.PAYPAL_CLIIENT_ID;
+}
+<section class="section novi-bg novi-bg-img section-md bg-default text-center section-top-shadow">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-9 col-lg-7 col-xl-5">
+                <h3>Choose a Payment Method</h3>
+                <br />
+                <div id="paypal">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts{
+    <script src="@paypalSDKUrl" data-namespace="paypal_sdk"></script>
+    <script>
+        paypal_sdk.Buttons({
+            createOrder: function (data, actions) {
+                // This function sets up the details of the transaction, including the amount and line item details.
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '@ViewBag.Value'
+                        }
+                    }]
+                });
+            },
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
+                    alert('Transaction completed by ' + details.payer.name.given_name);
+                    // Call your server to save the transaction
+                    return fetch('@Url.Action("ConfirmPaypalTransaction")', {
+                        method: 'post',
+                        headers: {
+                            'content-type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            orderID: data.orderID
+                        })
+                    });
+                });
+            }
+        }).render('#paypal');
+    </script>
+}

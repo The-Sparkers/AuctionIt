@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using Attribute = AuctionIt.ViewModels.AuctionsViewModels.Attribute;
 
 namespace AuctionIt.Controllers
 {
@@ -216,22 +217,22 @@ namespace AuctionIt.Controllers
                 model.ProductDetails.Images.Add("page1_pic6-270x217.jpg");
                 model.ProductDetails.Images.Add("page1_pic7-270x217.jpg");
                 model.ProductDetails.Images.Add("page1_pic8-270x217.jpg");
-                model.ProductDetails.Attributes.Add(new ViewModels.Attribute
+                model.ProductDetails.Attributes.Add(new Attribute
                 {
                     Name = "Brand",
                     Value = "Levis"
                 });
-                model.ProductDetails.Attributes.Add(new ViewModels.Attribute
+                model.ProductDetails.Attributes.Add(new Attribute
                 {
                     Name = "Color",
                     Value = "Blue"
                 });
-                model.ProductDetails.Attributes.Add(new ViewModels.Attribute
+                model.ProductDetails.Attributes.Add(new Attribute
                 {
                     Name = "Condition",
                     Value = "New"
                 });
-                model.ProductDetails.Attributes.Add(new ViewModels.Attribute
+                model.ProductDetails.Attributes.Add(new Attribute
                 {
                     Name = "Lorem",
                     Value = "Ipsum"
@@ -425,12 +426,12 @@ namespace AuctionIt.Controllers
                     model.Bids = model.Bids.OrderByDescending(x => x.Price).ToList();
                     model.ProductDetails.Images.Add("page1_pic7-270x217.jpg");
                     model.ProductDetails.Images.Add("page1_pic8-270x217.jpg");
-                    model.ProductDetails.Attributes.Add(new ViewModels.Attribute
+                    model.ProductDetails.Attributes.Add(new Attribute
                     {
                         Name = "Fusce auctor",
                         Value = "ipsum id"
                     });
-                    model.ProductDetails.Attributes.Add(new ViewModels.Attribute
+                    model.ProductDetails.Attributes.Add(new Attribute
                     {
                         Name = "Donec tempor",
                         Value = "ex eget"

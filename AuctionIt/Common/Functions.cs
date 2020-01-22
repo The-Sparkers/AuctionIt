@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
+using System.Net.Http;
 
 namespace AuctionIt.Common
 {
@@ -62,7 +64,7 @@ namespace AuctionIt.Common
             }
             return s;
         }
-        public static string ResolveServerUrl(string serverUrl,Uri originalUri,bool forceHttps)
+        public static string ResolveServerUrl(string serverUrl, Uri originalUri, bool forceHttps)
         {
             if (serverUrl.IndexOf("://") > -1)
             {
@@ -73,6 +75,56 @@ namespace AuctionIt.Common
             newUrl = (forceHttps ? "https" : originalUri.Scheme) +
                 "://" + originalUri.Authority + newUrl;
             return newUrl;
+        }
+        public static async System.Threading.Tasks.Task<decimal> PKRToUSDAsync(decimal amountInPkr)
+        {
+            decimal convertedAmount = 0;
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(Strings.PKR_USD_EXCHANGE_RATE_API_URL);
+                    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage response = await client.GetAsync(new Uri(Strings.PKR_USD_EXCHANGE_RATE_API_URL));
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string content = await response.Content.ReadAsStringAsync();
+                        JObject currencyResponse = JObject.Parse(content);
+                        decimal exchangeRate = (decimal)currencyResponse["PKR_USD"];
+                        convertedAmount = amountInPkr * exchangeRate;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+            return convertedAmount;
+        }
+        public static async System.Threading.Tasks.Task<decimal> USDToPKRAsync(decimal amountInUsd)
+        {
+            decimal convertedAmount = 0;
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(Strings.USD_PKR_EXCHANGE_RATE_API_URL);
+                    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage response = await client.GetAsync(new Uri(Strings.USD_PKR_EXCHANGE_RATE_API_URL));
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string content = await response.Content.ReadAsStringAsync();
+                        JObject currencyResponse = JObject.Parse(content);
+                        decimal exchangeRate = (decimal)currencyResponse["USD_PKR"];
+                        convertedAmount = amountInUsd * exchangeRate;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+            return convertedAmount;
         }
     }
 }
