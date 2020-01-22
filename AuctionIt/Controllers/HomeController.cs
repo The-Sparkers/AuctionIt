@@ -1,5 +1,7 @@
 ﻿using AuctionIt.Models;
 using AuctionIt.ViewModels;
+using AuctionIt.ViewModels.AuctionsViewModels;
+using AuctionIt.ViewModels.HomeControllerViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;

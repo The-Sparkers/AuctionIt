@@ -1,5 +1,5 @@
 ﻿using AuctionIt.ASPNetIdentity;
-using AuctionIt.ViewModels;
+using AuctionIt.ViewModels.AccountViewModels;
 using ImageMagick;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;

@@ -1,5 +1,5 @@
 ﻿using AuctionIt.Models;
-using AuctionIt.ViewModels;
+using AuctionIt.ViewModels.AuctionsViewModels;
 using PagedList;
 using System;
 using System.Collections.Generic;

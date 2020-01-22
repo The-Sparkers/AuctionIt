@@ -1,7 +1,7 @@
-﻿using System;
+﻿using AuctionIt.ViewModels.AuctionsViewModels;
 using System.Collections.Generic;
 
-namespace AuctionIt.ViewModels
+namespace AuctionIt.ViewModels.HomeControllerViewModels
 {
     public class IndexViewModel
     {

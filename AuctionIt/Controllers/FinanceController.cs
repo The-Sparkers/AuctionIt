@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using PayPal;
 
 namespace AuctionIt.Controllers
 {
@@ -11,6 +12,7 @@ namespace AuctionIt.Controllers
         // GET: Finance
         public ActionResult Index()
         {
+
             return View();
         }
     }

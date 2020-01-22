@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
 
-namespace AuctionIt.ViewModels
+namespace AuctionIt.ViewModels.AccountViewModels
 {
     public class ProfileDetailsViewModel
     {

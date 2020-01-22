@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace AuctionIt.ViewModels
+namespace AuctionIt.ViewModels.AuctionsViewModels
 {
     public class IndexSearchViewModel
     {
