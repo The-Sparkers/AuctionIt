@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Net;
 using System.Net.Http;
+using System.Net.Mail;
 
 namespace AuctionIt.Common
 {
@@ -125,6 +127,16 @@ namespace AuctionIt.Common
 
             }
             return convertedAmount;
+        }
+        public static void SendEmail(MailMessage mail)
+        {
+            SmtpClient client = new SmtpClient("smtp.live.com")
+            {
+                Credentials = new NetworkCredential(Strings.EMAIL_ADDRESS, ""),
+                Port = 587,
+                EnableSsl = true
+            };
+            client.Send(mail);
         }
     }
 }

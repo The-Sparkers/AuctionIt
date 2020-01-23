@@ -7,6 +7,7 @@ using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AuctionIt.ASPNetIdentity;
+using System.Net.Mail;
 
 namespace AuctionIt
 {
@@ -15,6 +16,12 @@ namespace AuctionIt
         public Task SendAsync(IdentityMessage message)
         {
             // Plug in your email service here to send an email.
+            MailMessage mail = new MailMessage(Common.Strings.EMAIL_ADDRESS, message.Destination)
+            {
+                Subject = message.Subject,
+                Body = message.Body
+            };
+            Common.Functions.SendEmail(mail);
             return Task.FromResult(0);
         }
     }
@@ -46,13 +53,13 @@ namespace AuctionIt
             manager.UserValidator = new UserValidator<ApplicationUser>(manager)
             {
                 AllowOnlyAlphanumericUserNames = false,
-                RequireUniqueEmail = false
+                RequireUniqueEmail = true
             };
 
             // Configure validation logic for passwords
             manager.PasswordValidator = new PasswordValidator
             {
-                RequiredLength = 6,
+                RequiredLength = 8,
                 RequireNonLetterOrDigit = false,
                 RequireDigit = true,
                 RequireLowercase = false,
