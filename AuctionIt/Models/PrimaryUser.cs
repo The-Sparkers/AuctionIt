@@ -72,7 +72,14 @@ namespace AuctionIt.Models
         public List<Advertisement> GetFavoriteAdvertisements()
         {
             List<Advertisement> advertisements = new List<Advertisement>();
-
+            var data = GetIteratableData("GetInterestedAdvertisements", SQLCommandTypes.StoredProcedure, new SqlParameter("@userId", System.Data.SqlDbType.BigInt)
+            {
+                Value = UserId
+            });
+            while (data.Read())
+            {
+                advertisements.Add(new Advertisement((long)data[0]));
+            }
             return advertisements;
         }
         /// <summary>
@@ -82,7 +89,7 @@ namespace AuctionIt.Models
         /// <returns></returns>
         public static PrimaryUser GetPrimaryUser(string cnic)
         {
-            return null;
+            return GetAllPrimaryUsers().Where(x => x.CNIC == cnic).First();
         }
         /// <summary>
         /// Returns a list of all primary users present in the database
@@ -93,7 +100,13 @@ namespace AuctionIt.Models
         public static List<PrimaryUser> GetAllPrimaryUsers(string name = "", int max = 0)
         {
             List<PrimaryUser> lstUsers = new List<PrimaryUser>();
-            return lstUsers;
+            PrimaryUser temp = new PrimaryUser(0);
+            var data = temp.GetIteratableData("GetPrimaryUsers", SQLCommandTypes.StoredProcedure);
+            while (data.Read())
+            {
+                lstUsers.Add(new PrimaryUser((long)data[0]));
+            }
+            return lstUsers.Where(x => x.FullName.FirstName.Contains(name)).ToList();
         }
         public override List<object> GetAllData()
         {
