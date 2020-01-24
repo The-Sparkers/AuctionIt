@@ -18,20 +18,20 @@ namespace AuctionIt.Common
             return (val.Length == 13)
                 ? (regex.IsMatch(val)
                 ? ValidationResult.Success
-                : new ValidationResult(string.Format("The field {0} should be in the format like: +923001234567", validationContext.DisplayName)))
-                : new ValidationResult(string.Format("The field {0} must be consisted of 13 digits", validationContext.DisplayName));
+                : new ValidationResult(string.Format("The field {0} should be in the format like: +923001234567", validationContext.MemberName)))
+                : new ValidationResult(string.Format("The field {0} must be consisted of 13 digits", validationContext.MemberName));
         }
     }
     public class CNICValidationAttribute : ValidationAttribute
     {
-        readonly Regex regex = new Regex(@"([0-9]{5})[-]([0-9]{8})[-]([0-9])");
+        readonly Regex regex = new Regex(@"([0-9]{5})[-]([0-9]{7})[-]([0-9])");
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             string val = (string)value;
             return (val.Length == 15) ? (regex.IsMatch(val)
                 ? ValidationResult.Success
-                : new ValidationResult(string.Format("The Field {0} must be in the format like: XXXXX-XXXXXXX-X", validationContext.DisplayName)))
-                : new ValidationResult(string.Format("The Field {0} must be consisted of 15 digits", validationContext.DisplayName));
+                : new ValidationResult(string.Format("The Field {0} must be in the format like: XXXXX-XXXXXXX-X", validationContext.MemberName)))
+                : new ValidationResult(string.Format("The Field {0} must be consisted of 15 digits", validationContext.MemberName));
         }
     }
     public class NoPastDateRange : RangeAttribute

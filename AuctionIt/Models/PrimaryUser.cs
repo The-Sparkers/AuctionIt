@@ -1,6 +1,8 @@
 ﻿using ModelSQLHandler;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace AuctionIt.Models
@@ -18,6 +20,14 @@ namespace AuctionIt.Models
 
         public PrimaryUser(NameFormat name, ContactNumberFormat phoneNumber, string city, string cnic) : base(name, phoneNumber, city)
         {
+            ExecuteQuery("AddPrimaryUser", SQLCommandTypes.StoredProcedure, new SqlParameter("@userId", System.Data.SqlDbType.BigInt)
+            {
+                Value = UserId
+            },
+            new SqlParameter("@cnic", System.Data.SqlDbType.NChar)
+            {
+                Value = cnic
+            });
             this.cnic = cnic;
         }
         /// <summary>
@@ -29,17 +39,7 @@ namespace AuctionIt.Models
         /// Unique CNIC of this user
         /// </summary>
         [DataMember]
-        public string CNIC
-        {
-            get
-            {
-                return cnic;
-            }
-            set
-            {
-                cnic = value;
-            }
-        }
+        public string CNIC => cnic;
         /// <summary>
         /// Gets the history of all th bids placed by this user
         /// </summary>
@@ -47,6 +47,14 @@ namespace AuctionIt.Models
         public List<Auction.Bid> GetBiddingHistory()
         {
             List<Auction.Bid> lstBids = new List<Auction.Bid>();
+            var auctions = Auction.GetAllAuctions()
+                .Where(x => x.GetBidsHistory()
+                .Select(y => y.Bidder.UserId)
+                .Contains(UserId))
+                .ToList();
+            auctions.Select(x => x.GetBidsHistory()).ToList()
+                .ForEach(x => lstBids.AddRange(x
+                .Where(y => y.Bidder.UserId == UserId)));
             return lstBids;
         }
         /// <summary>
@@ -55,8 +63,7 @@ namespace AuctionIt.Models
         /// <returns></returns>
         public List<Advertisement> GetPostedAdvertisements()
         {
-            List<Advertisement> lstAd = new List<Advertisement>();
-            return lstAd;
+            return Advertisement.GetAllAdvertisements().Where(x => x.AdPoster.UserId == UserId).ToList();
         }
         /// <summary>
         /// Returns a list of ads that were added to its interest list by this user
@@ -65,6 +72,7 @@ namespace AuctionIt.Models
         public List<Advertisement> GetFavoriteAdvertisements()
         {
             List<Advertisement> advertisements = new List<Advertisement>();
+
             return advertisements;
         }
         /// <summary>
@@ -106,6 +114,14 @@ namespace AuctionIt.Models
         public override void InitiateValues()
         {
             //initiates values from the database by using primary key
+            var data = GetIteratableData("GetPrimaryUser", SQLCommandTypes.StoredProcedure, new SqlParameter("@id", System.Data.SqlDbType.BigInt)
+            {
+                Value = UserId
+            });
+            while (data.Read())
+            {
+                cnic = (string)data["CNIC"];
+            }
         }
     }
 }

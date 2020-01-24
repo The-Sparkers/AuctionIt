@@ -1,7 +1,9 @@
-﻿using System;
+﻿using ModelSQLHandler;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Runtime.Serialization;
-using ModelSQLHandler;
 
 namespace AuctionIt.Models
 {
@@ -12,8 +14,9 @@ namespace AuctionIt.Models
         private decimal startingBidPrice;
         private DateTime startTime;
         private DateTime endTime;
-        private bool isClosed;
+        private readonly bool isClosed;
         private long id;
+        private Advertisement ad;
 
         public Auction(long id)
         {
@@ -22,17 +25,36 @@ namespace AuctionIt.Models
         }
         public Auction(decimal securityFee, decimal startingBidPrice, DateTime startTime, DateTime endTime, Advertisement advertisement)
         {
-
+            id = Convert.ToInt64(GetValue("AddAuction", SQLCommandTypes.StoredProcedure, new SqlParameter("@adId", System.Data.SqlDbType.BigInt)
+            {
+                Value = advertisement.Id
+            }, new SqlParameter("@startingPrice", System.Data.SqlDbType.Money)
+            {
+                Value = advertisement.StartingPrice
+            },
+            new SqlParameter("@endTime", System.Data.SqlDbType.DateTime)
+            {
+                Value = endTime
+            },
+            new SqlParameter("@startTime", System.Data.SqlDbType.DateTime)
+            {
+                Value = startTime
+            },
+            new SqlParameter("@secutiryFee", System.Data.SqlDbType.Money)
+            {
+                Value = securityFee
+            }));
+            this.securityFee = securityFee;
+            this.startingBidPrice = startingBidPrice;
+            this.startTime = startTime;
+            this.endTime = endTime;
+            ad = advertisement;
         }
-        private Advertisement ad;
         /// <summary>
         /// The advertisement for which this auction has been opened
         /// </summary>
         [DataMember]
-        public Advertisement Advertisement
-        {
-            get { return ad; }
-        }
+        public Advertisement Advertisement => ad;
 
         /// <summary>
         /// Get the close status of the auction
@@ -40,55 +62,57 @@ namespace AuctionIt.Models
         [DataMember]
         public bool IsClosed
         {
-            get { return isClosed; }
-            set { isClosed = value; }
+            get
+            {
+                try
+                {
+                    return Advertisement.IsSold;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
         }
 
         /// <summary>
         /// Primary Key
         /// </summary>
         [DataMember]
-        public long Id
-        {
-            get { return id; }
-        }
+        public long Id => id;
         /// <summary>
         /// Expiry Time of the auction
         /// </summary>
         [DataMember]
-        public DateTime EndTime
-        {
-            get { return endTime; }
-        }
+        public DateTime EndTime => endTime;
         /// <summary>
         /// Starting Time of the auction
         /// </summary>
         [DataMember]
-        public DateTime StartTime
-        {
-            get { return startTime; }
-        }
+        public DateTime StartTime => startTime;
         /// <summary>
         /// Base price of the auction item
         /// </summary>
         [DataMember]
-        public decimal StartingBidPrice
-        {
-            get { return startingBidPrice; }
-        }
+        public decimal StartingBidPrice => startingBidPrice;
         /// <summary>
         /// Security fee to be paid by the bidder to enter into the auction
         /// </summary>
         [DataMember]
-        public decimal SecurityFee
-        {
-            get { return securityFee; }
-        }
+        public decimal SecurityFee => securityFee;
         /// <summary>
         /// Current Highest bid in the auction
         /// </summary>
         [DataMember]
-        public Bid HighestBid { get; }
+        public Bid HighestBid
+        {
+            get
+            {
+                var bids = GetBidsHistory();
+                bids.OrderByDescending(x => x.TimeStamp);
+                return bids.First();
+            }
+        }
         /// <summary>
         /// Checks if the auction time is ended or not
         /// </summary>
@@ -126,9 +150,31 @@ namespace AuctionIt.Models
         /// Place a new Bid into the auction
         /// </summary>
         /// <param name="bid"></param>
-        public void PlaceBid(Bid bid)
+        public bool PlaceBid(Bid bid)
         {
-
+            if (bid.Price <= HighestBid.Price)
+            {
+                return false;
+            }
+            else
+            {
+                ExecuteQuery("BidToAuction", SQLCommandTypes.StoredProcedure, new SqlParameter("@userId", System.Data.SqlDbType.BigInt)
+                {
+                    Value = bid.Bidder.UserId
+                }, new SqlParameter("@adId", System.Data.SqlDbType.BigInt)
+                {
+                    Value = bid.GetAuction().Advertisement.Id
+                },
+                new SqlParameter("@bid", System.Data.SqlDbType.Money)
+                {
+                    Value = bid.Price
+                },
+                new SqlParameter("@dateTime", System.Data.SqlDbType.DateTime)
+                {
+                    Value = bid.TimeStamp
+                });
+                return true;
+            }
         }
         /// <summary>
         /// Returns true if security fee for this auction is paid or not
@@ -137,7 +183,14 @@ namespace AuctionIt.Models
         /// <returns></returns>
         public bool IsSecurityPaid(PrimaryUser bidder)
         {
-            return (Token.GetToken(bidder.UserId + "_" + id).Auction == this);
+            try
+            {
+                return (Token.GetToken(bidder.UserId + "_" + id).Auction.Id == id);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
         /// <summary>
         /// Pay security security fee and returns a token to be used for the auction
@@ -159,7 +212,26 @@ namespace AuctionIt.Models
         /// <returns></returns>
         public bool Pay(PrimaryUser buyer)
         {
-            return true;
+            try
+            {
+                ExecuteQuery("PayForAuction", SQLCommandTypes.StoredProcedure, new SqlParameter("@userId", System.Data.SqlDbType.BigInt)
+                {
+                    Value = buyer.UserId
+                },
+                new SqlParameter("@aId", System.Data.SqlDbType.BigInt)
+                {
+                    Value = ad.Id
+                },
+                new SqlParameter("@price", System.Data.SqlDbType.Money)
+                {
+                    Value = HighestBid.Price
+                });
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
         /// <summary>
         /// Gets a history of all the bids palced previously
@@ -168,6 +240,14 @@ namespace AuctionIt.Models
         public List<Bid> GetBidsHistory()
         {
             List<Bid> lstBids = new List<Bid>();
+            var data = GetIteratableData("GetAuctionBids", SQLCommandTypes.StoredProcedure, new SqlParameter("@auctionId", System.Data.SqlDbType.BigInt)
+            {
+                Value = id
+            });
+            while (data.Read())
+            {
+                lstBids.Add(new Bid(new Auction((long)data["AuctionId"]), new PrimaryUser((long)data["UserId"]), (decimal)data["Bid"], (DateTime)data["DateTime"]));
+            }
             return lstBids;
         }
         /// <summary>
@@ -178,6 +258,12 @@ namespace AuctionIt.Models
         public static List<Auction> GetAllAuctions(int max = 0)
         {
             List<Auction> lstAuctions = new List<Auction>();
+            Auction temp = new Auction(0);
+            var data = temp.GetIteratableData("GetAuctions", SQLCommandTypes.StoredProcedure);
+            while (data.Read())
+            {
+                lstAuctions.Add(new Auction((long)data["AuctionId"]));
+            }
             return lstAuctions;
         }
 
@@ -205,7 +291,18 @@ namespace AuctionIt.Models
 
         public override void InitiateValues()
         {
-            //initiates values from the database by using primary key
+            var data = GetIteratableData("GetAuction", SQLCommandTypes.StoredProcedure, new SqlParameter("@id", System.Data.SqlDbType.BigInt)
+            {
+                Value = id
+            });
+            while (data.Read())
+            {
+                startingBidPrice = (decimal)data[1];
+                startTime = (DateTime)data[2];
+                securityFee = (decimal)data[3];
+                endTime = (DateTime)data[4];
+                ad = new Advertisement((long)data[5]);
+            }
         }
 
         public override List<object> GetAllData()
@@ -251,24 +348,12 @@ namespace AuctionIt.Models
             /// The user who placed the bid
             /// </summary>
             [DataMember]
-            public PrimaryUser Bidder
-            {
-                get
-                {
-                    return bidder;
-                }
-            }
+            public PrimaryUser Bidder => bidder;
             /// <summary>
             /// The value which is palced
             /// </summary>
             [DataMember]
-            public decimal Price
-            {
-                get
-                {
-                    return price;
-                }
-            }
+            public decimal Price => price;
         }
     }
 }

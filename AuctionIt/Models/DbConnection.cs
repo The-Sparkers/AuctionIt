@@ -1,5 +1,4 @@
 ﻿using ModelSQLHandler;
-using System.Configuration;
 using System.Runtime.Serialization;
 
 namespace AuctionIt.Models
@@ -10,7 +9,7 @@ namespace AuctionIt.Models
         public static readonly string CONNECTION_STRING;
         static DbConnection()
         {
-            CONNECTION_STRING = ConfigurationManager.ConnectionStrings["DbConnection"].ConnectionString;
+            CONNECTION_STRING = AuctionIt.Common.Strings.CONNECTION_STRING;
         }
         public DbConnection() : base(CONNECTION_STRING)
         {

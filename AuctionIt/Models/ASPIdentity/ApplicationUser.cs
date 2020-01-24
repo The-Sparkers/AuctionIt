@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
-using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -22,7 +21,7 @@ namespace AuctionIt.ASPNetIdentity
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("connectionString", throwIfV1Schema: false)
+            : base(Models.DbConnection.CONNECTION_STRING, throwIfV1Schema: false)
         {
         }
 

@@ -1,4 +1,6 @@
-﻿namespace AuctionIt.Common
+﻿using System.Configuration;
+
+namespace AuctionIt.Common
 {
     public static class Strings
     {
@@ -13,5 +15,10 @@
         public static readonly string PKR_USD_EXCHANGE_RATE_API_URL = "http://free.currconv.com/api/v7/convert?q=PKR_USD&compact=ultra&apiKey=0922005b5fac5f3eaeda";
         public static readonly string USD_PKR_EXCHANGE_RATE_API_URL = "http://free.currconv.com/api/v7/convert?q=USD_PKR&compact=ultra&apiKey=0922005b5fac5f3eaeda";
         public static readonly string EMAIL_ADDRESS = "nobelhighschool@hotmail.com";
+        public static readonly string CONNECTION_STRING;
+        static Strings()
+        {
+            CONNECTION_STRING = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+        }
     }
 }

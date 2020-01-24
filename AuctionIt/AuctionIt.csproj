@@ -286,6 +286,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Common\Functions.cs" />
     <Compile Include="Common\PayPal.cs" />
+    <Compile Include="Common\SecreteKeys.cs" />
     <Compile Include="Common\Strings.cs" />
     <Compile Include="Common\Validators.cs" />
     <Compile Include="Common\Values.cs" />
@@ -322,6 +323,7 @@
     <Compile Include="ViewModels\HomeViewModels.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\DbSchema.sql" />
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
@@ -510,9 +512,7 @@
     <Content Include="Views\Auctions\_CurrentAuctionPriceSection.cshtml" />
     <Content Include="Views\Auctions\_VerifyAdForm.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
   </ItemGroup>

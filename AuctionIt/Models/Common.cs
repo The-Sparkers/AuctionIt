@@ -25,14 +25,14 @@ namespace AuctionIt.Models
             [DataMember]
             public string FileName { get; set; }
             [DataMember]
-            public string ParentId { get; set; }
+            public long ParentId { get; set; }
             public string GetSaveLocation()
             {
-                return null;
+                return AuctionIt.Common.Strings.IMAGES_UPLOAD_PATH;
             }
             public string GetFilePath()
             {
-                return null;
+                return GetSaveLocation() + FileName;
             }
         }
     }

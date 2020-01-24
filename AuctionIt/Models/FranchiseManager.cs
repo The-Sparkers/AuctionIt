@@ -1,13 +1,14 @@
-﻿using System;
+﻿using ModelSQLHandler;
+using System;
 using System.Collections.Generic;
-using ModelSQLHandler;
-using static AuctionIt.Models.Common;
+using System.Data.SqlClient;
 
 namespace AuctionIt.Models
 {
     public class FranchiseManager : User
     {
-        private Location location;
+        private string location;
+        private string franchiseNumber;
         /// <summary>
         /// Initiates new instance of franchise manager by using the primary key
         /// </summary>
@@ -23,16 +24,25 @@ namespace AuctionIt.Models
         /// <param name="phoneNumber"></param>
         /// <param name="city"></param>
         /// <param name="location"></param>
-        public FranchiseManager(NameFormat fullName, ContactNumberFormat phoneNumber, string city, Location location) : base(fullName, phoneNumber, city)
+        public FranchiseManager(NameFormat fullName, ContactNumberFormat phoneNumber, string city, string location, string franchiseNumber) : base(fullName, phoneNumber, city)
         {
-
+            ExecuteQuery("AddFranchiseManager", SQLCommandTypes.StoredProcedure, new SqlParameter("@userId", System.Data.SqlDbType.BigInt)
+            {
+                Value = UserId
+            },
+            new SqlParameter("@fNumber", System.Data.SqlDbType.VarChar)
+            {
+                Value = franchiseNumber
+            },
+            new SqlParameter("@fLocation", System.Data.SqlDbType.VarChar)
+            {
+                Value = location
+            });
         }
 
-        public Location Location
-        {
-            get { return location; }
-            set { location = value; }
-        }
+        public string Location => location;
+        public string Franchisenumber => franchiseNumber;
+
         /// <summary>
         /// Registers the franchise manager as a system identity
         /// </summary>
@@ -49,9 +59,15 @@ namespace AuctionIt.Models
         /// </summary>
         /// <param name="max">maximum number of data (0 means no limit)</param>
         /// <returns></returns>
-        public static List<FranchiseManager> GetAllFranchiseManagers(int max=0)
+        public static List<FranchiseManager> GetAllFranchiseManagers(int max = 0)
         {
             List<FranchiseManager> lstFranchiseManagers = new List<FranchiseManager>();
+            FranchiseManager temp = new FranchiseManager(0);
+            var data = temp.GetIteratableData("GetFranchiseManagers", SQLCommandTypes.StoredProcedure);
+            while (data.Read())
+            {
+                lstFranchiseManagers.Add(new FranchiseManager((long)data[0]));
+            }
             return lstFranchiseManagers;
         }
         public override List<object> GetAllData()
@@ -68,7 +84,16 @@ namespace AuctionIt.Models
         }
         public override void InitiateValues()
         {
-            //initate values from db
+            //initiate values from db
+            var data = GetIteratableData("GetFranchiseManager", SQLCommandTypes.StoredProcedure, new SqlParameter("@id", System.Data.SqlDbType.BigInt)
+            {
+                Value = UserId
+            });
+            while (data.Read())
+            {
+                location = (string)data[8];
+                franchiseNumber = (string)data[9];
+            }
         }
         public override Type GetObjectType()
         {
