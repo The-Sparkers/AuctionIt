@@ -176,7 +176,6 @@ namespace AuctionIt.Controllers
             }
             return null;
         }
-
         public ActionResult Details(long id)
         {
             try
@@ -194,24 +193,29 @@ namespace AuctionIt.Controllers
                 //};
                 AuctionDetailsViewModel model = new AuctionDetailsViewModel
                 {
-                    ActualPrice = 2000,
+                    Price = new ActiveAuctionPriceViewModel
+                    {
+                        ActualPrice = 2000,
+                        HighestBid = 4000,
+                        IsFavorite = false,
+                        NumberOfBids = 10,
+                        Id = 1
+                    },
                     AdId = 1,
                     AuctionId = 1,
                     ProductDetails = new ProductDetailsViewModel
                     {
                         Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam consectetur velit eget turpis elementum consequat. Curabitur lectus sapien, porta eget turpis quis, interdum consectetur orci. Aenean in lorem consequat, feugiat eros in, iaculis purus. Vivamus accumsan augue in urna molestie facilisis. Donec dolor eros, iaculis a condimentum imperdiet, hendrerit et leo. Vivamus dignissim fringilla volutpat. Sed imperdiet mi eget libero molestie, vitae tempor erat pharetra. Ut metus neque, luctus iaculis eros vitae, dignissim auctor elit. Integer vel tellus tincidunt, fermentum lacus non, fringilla nisi. Ut eget mattis lorem, sit amet blandit risus. Nullam vitae est elit. Donec ipsum ex, vestibulum vel augue et, euismod cursus est. Pellentesque facilisis libero urna, ut tristique tellus porttitor at."
-
                     },
-                    HighestBid = 4000,
                     PostedBy = new PostedByViewModel
                     {
                         Name = new User.NameFormat { FirstName = "Umair", LastName = "Tahir" },
                         Id = 199,
                         ProfilePic = "team-01-270x270.jpg"
                     },
+                    VerifyForm = new VerifyFormViewModel(),
                     Title = "Billieblush Girls Blue Fluffy Cardigan",
-                    IsFavorite = false,
-                    NumberOfBids = 10,
+
                     RemainingTime = TimeSpan.FromMinutes(30.4)
                 };
                 model.ProductDetails.Images.Add("page1_pic6-270x217.jpg");
@@ -478,7 +482,20 @@ namespace AuctionIt.Controllers
                 return RedirectToAction("Error500", "Errors", new { message = ex.Message });
             }
         }
-
+        public ActionResult UnverifiedAuctions()
+        {
+            List<UnverifiedAuctionsViewModel> model = new List<UnverifiedAuctionsViewModel>
+            {
+                new UnverifiedAuctionsViewModel
+                {
+                    Id = 1,
+                    Picture = "page1_pic1-270x271.jpg",
+                    Title = "Lorem Ipsum",
+                    UserName = "Umair Tahir"
+                }
+            };
+            return View(model);
+        }
         /// <summary>
         /// 
         /// </summary>

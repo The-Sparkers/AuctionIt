@@ -2,8 +2,6 @@
 
 @{
     ViewBag.Title = "Details";
-
-
 }
 <br />
 <div class="container-fluid">
@@ -25,42 +23,14 @@
         <div class="col-md-4">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-12">
-                        <!--Price Section-->
-                        <p>
-                            <h5 class="text-black">Current Bid:</h5>
-                            <h2 class="text-left text-sm-left">
-                                @AuctionIt.Common.Strings.CURRENCY_UNIT
-                                <span class="h2-style">@Model.HighestBid</span>
-                                @if (!Model.IsFavorite)
-                                {
-                                    <a class="button-icon button-icon-left button-sm post-modern-link text-primary" href="@Url.Action("AddToInterest","Auctions",new { id=Model.AuctionId})">
-                                        <span class="icon fa fa-heart-o" id="fav"></span>
-
-                                    </a>
-                                }
-                                else
-                                {
-                                    <a class="button-icon button-icon-left button-sm post-modern-link text-primary" href="@Url.Action("AddToInterest","Auctions",new { id=Model.AuctionId})">
-                                        <span class="icon fa fa-heart" id="fav"></span>
-
-                                    </a>
-                                }
-                            </h2>
-                            <h5 class="text-left text-sm-left">
-                                @Html.LabelFor(m => m.ActualPrice)
-                                <span class="h2-style">@AuctionIt.Common.Strings.CURRENCY_UNIT @Model.ActualPrice</span>
-                            </h5>
-                            <br />
-                            <a class="button button-box-right button-primary" href="@Url.Action("PlaceBid","Auction", new { id=Model.AuctionId })">
-                                Place a bid
-                                <div class="button-box">
-                                    <div class="button-box-text">X</div>
-                                    <div class="button-box-count">@Model.NumberOfBids</div>
-                                </div>
-                            </a>
-                        </p>
-                    </div>
+                    @if (User.IsInRole("Franchise Manager"))
+                    {
+                        @Html.Partial("_VerifyAdForm", Model.VerifyForm)
+                    }
+                    else
+                    {
+                        @Html.Partial("_CurrentAuctionPriceSection", Model.Price)
+                    }
                     <div class="col-md-12">
                         @Html.Partial("_PostedBy", Model.PostedBy)
                     </div>

@@ -506,6 +506,9 @@
     <Content Include="Views\Account\ChangePassword.cshtml" />
     <Content Include="Views\Account\UpdateProfileImage.cshtml" />
     <Content Include="Views\Finance\TopUp.cshtml" />
+    <Content Include="Views\Auctions\UnverifiedAuctions.cshtml" />
+    <Content Include="Views\Auctions\_CurrentAuctionPriceSection.cshtml" />
+    <Content Include="Views\Auctions\_VerifyAdForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

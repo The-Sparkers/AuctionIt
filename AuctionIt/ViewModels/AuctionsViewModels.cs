@@ -1,4 +1,5 @@
-﻿using AuctionIt.Models;
+﻿using AuctionIt.Common;
+using AuctionIt.Models;
 using PagedList;
 using System;
 using System.Collections.Generic;
@@ -22,15 +23,36 @@ namespace AuctionIt.ViewModels.AuctionsViewModels
         public long AdId { get; set; }
         [Display(Name = "Auction Title")]
         public string Title { get; set; }
-        [Display(Name = "Opening Price")]
-        public decimal ActualPrice { get; set; }
-        [Display(Name = "Current Bid")]
-        public decimal HighestBid { get; set; }
         public PostedByViewModel PostedBy { get; set; }
         public ProductDetailsViewModel ProductDetails { get; set; }
-        public bool IsFavorite { get; set; }
-        public int NumberOfBids { get; set; }
         public TimeSpan RemainingTime { get; set; }
+        public ActiveAuctionPriceViewModel Price { get; set; }
+        public VerifyFormViewModel VerifyForm { get; set; }
+    }
+    public class ActiveAuctionPriceViewModel
+    {
+        public long Id { get; set; }
+        [Display(Name = "Current Bid")]
+        public decimal HighestBid { get; set; }
+        public bool IsFavorite { get; set; }
+        [Display(Name = "Opening Price")]
+        public decimal ActualPrice { get; set; }
+        public int NumberOfBids { get; set; }
+    }
+    public class UnverifiedAuctionPriceViewModel
+    {
+        public long Id { get; set; }
+        [Display(Name = "Price")]
+        public decimal Price { get; set; }
+    }
+    public class VerifyFormViewModel
+    {
+        public long Id { get; set; }
+        [Display(Name ="Expiry Time")]
+        [Required]
+        [DataType(DataType.Date)]
+        [NoPastDateRange]
+        public DateTime EndingTime { get; set; }
     }
     public class FinishedAuctionViewModel
     {
@@ -113,6 +135,16 @@ namespace AuctionIt.ViewModels.AuctionsViewModels
         public List<Attribute> Attributes { get; set; }
         [Display(Name = "Description")]
         public string Description { get; set; }
+    }
+    public class UnverifiedAuctionsViewModel
+    {
+        public long Id { get; set; }
+        [Display(Name = "Title")]
+        public string Title { get; set; }
+        public long UserId { get; set; }
+        [Display(Name = "Poster Name")]
+        public string UserName { get; set; }
+        public string Picture { get; set; }
     }
     public class PlaceBidDetailsViewModel
     {

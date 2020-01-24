@@ -1,0 +1,70 @@
+﻿@model IEnumerable<AuctionIt.ViewModels.AuctionsViewModels.UnverifiedAuctionsViewModel>
+
+@{
+    ViewBag.Title = "Unverified Auctions";
+    int index = 0;
+}
+
+<section class="section novi-bg novi-bg-img section-md bg-default text-center section-top-shadow">
+    <h2>@ViewBag.Title</h2>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-custom-responsive">
+                    <table class="table table-custom table-custom-secondary">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Ad. Id</th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Title)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Picture)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.UserName)
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@(++index)</td>
+                                <td>@item.Id</td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Title)
+                                </td>
+                                <td>
+                                    <img class="img-fluid" src="@Url.Content(AuctionIt.Common.Strings.IMAGES_UPLOAD_PATH+item.Picture)" />
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.UserName)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Details", "Details", new { id = item.Id })
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section Style{
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+}
+@section scripts{
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.table-custom').DataTable(
+
+            );
+        });
+    </script>
+}

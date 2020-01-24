@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
 namespace AuctionIt.Common
@@ -31,6 +32,12 @@ namespace AuctionIt.Common
                 ? ValidationResult.Success
                 : new ValidationResult(string.Format("The Field {0} must be in the format like: XXXXX-XXXXXXX-X", validationContext.DisplayName)))
                 : new ValidationResult(string.Format("The Field {0} must be consisted of 15 digits", validationContext.DisplayName));
+        }
+    }
+    public class NoPastDateRange : RangeAttribute
+    {
+        public NoPastDateRange() : base(typeof(DateTime), DateTime.Now.ToString(), DateTime.MaxValue.ToString())
+        {
         }
     }
 }

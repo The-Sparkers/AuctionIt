@@ -1,0 +1,23 @@
+﻿@model AuctionIt.ViewModels.AuctionsViewModels.VerifyFormViewModel
+<div class="col-md-12">
+    @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-black" })
+        @Html.HiddenFor(m => m.Id)
+        <div class="row row-30">
+            <div class="col-md-12">
+                <div class="form-wrap">
+                    @Html.EditorFor(m => m.EndingTime, new { @class = "form-input form-control-has-validation", type = "text", @data_constraints = "@Required" })
+                    <label>Expiry date</label>
+                    @Html.ValidationMessageFor(m => m.EndingTime, "", new { @class = "form-validation" })
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <button class="button button-block button-primary" type="submit">Verify</button>
+            </div>
+
+        </div>
+    }
+</div>
