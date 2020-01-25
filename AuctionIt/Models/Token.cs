@@ -47,17 +47,38 @@ namespace AuctionIt.Models
         /// Auction to which this token belongs
         /// </summary>
         [DataMember]
-        public Auction Auction => auction;
+        public Auction Auction
+        {
+            get
+            {
+                return auction;
+            }
+        }
+
         /// <summary>
         /// User who owned this token
         /// </summary>
         [DataMember]
-        public PrimaryUser Bidder => bidder;
+        public PrimaryUser Bidder
+        {
+            get
+            {
+                return bidder;
+            }
+        }
+
         /// <summary>
         /// Hashed Key for the token, Primary Key
         /// </summary>
         [DataMember]
-        public string HashKey => hashKey;
+        public string HashKey
+        {
+            get
+            {
+                return hashKey;
+            }
+        }
+
         /// <summary>
         /// Method to verify a token for a bidder against an auction
         /// </summary>
@@ -117,9 +138,9 @@ namespace AuctionIt.Models
             List<Token> lstTokens = new List<Token>();
             Token temp = new Token(0);
             var data = temp.GetIteratableData("SELECT TokenId FROM TOKENS", SQLCommandTypes.StoredProcedure);
-            while (data.Read())
+            foreach (var item in data)
             {
-                lstTokens.Add(new Token((long)data[0]));
+                lstTokens.Add(new Token(item.GetInt64(0)));
             }
             return lstTokens;
         }

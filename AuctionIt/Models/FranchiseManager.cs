@@ -7,7 +7,6 @@ namespace AuctionIt.Models
 {
     public class FranchiseManager : User
     {
-        private string location;
         private string franchiseNumber;
         /// <summary>
         /// Initiates new instance of franchise manager by using the primary key
@@ -40,19 +39,13 @@ namespace AuctionIt.Models
             });
         }
 
-        public string Location => location;
-        public string Franchisenumber => franchiseNumber;
-
-        /// <summary>
-        /// Registers the franchise manager as a system identity
-        /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        public FranchiseManager RegisterIdentity(string username, string password)
+        public string Location { get; private set; }
+        public string Franchisenumber
         {
-            User user = RegisterIdentity(username, password, Roles.FranchiseManager);
-            return new FranchiseManager(user.UserId);
+            get
+            {
+                return franchiseNumber;
+            }
         }
         /// <summary>
         /// Returns data of all Franchise Managers present in the database
@@ -64,9 +57,9 @@ namespace AuctionIt.Models
             List<FranchiseManager> lstFranchiseManagers = new List<FranchiseManager>();
             FranchiseManager temp = new FranchiseManager(0);
             var data = temp.GetIteratableData("GetFranchiseManagers", SQLCommandTypes.StoredProcedure);
-            while (data.Read())
+            foreach (var item in data)
             {
-                lstFranchiseManagers.Add(new FranchiseManager((long)data[0]));
+                lstFranchiseManagers.Add(new FranchiseManager(item.GetInt64(0)));
             }
             return lstFranchiseManagers;
         }
@@ -89,10 +82,10 @@ namespace AuctionIt.Models
             {
                 Value = UserId
             });
-            while (data.Read())
+            foreach (var item in data)
             {
-                location = (string)data[8];
-                franchiseNumber = (string)data[9];
+                Location = item.GetString(8);
+                franchiseNumber = item.GetString(9);
             }
         }
         public override Type GetObjectType()

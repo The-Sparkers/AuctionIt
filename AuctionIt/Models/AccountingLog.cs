@@ -12,56 +12,62 @@ namespace AuctionIt.Models
     [DataContract]
     public class AccountingLog : DbConnection
     {
-        private decimal debit;
-        private decimal credit;
-        private DateTime timeStamp;
-        private readonly string detail;
-        private User user;
-        private long id;
         public AccountingLog(User user)
         {
-            this.user = user;
+            this.User = user;
         }
         public AccountingLog(long id)
         {
-            this.id = id;
+            this.Id = id;
             InitiateValues();
         }
         /// <summary>
         /// Primary Key
         /// </summary>
         [DataMember]
-        public long Id => id;
+        public long Id { get; }
 
         /// <summary>
         /// The User to which this log belongs
         /// </summary>
         [DataMember]
-        public User User => user;
+        public User User { get; private set; }
         /// <summary>
         /// Details about the transaction
         /// </summary>
         [DataMember]
-        public string Detail => detail;
+        public string Detail => Detail1;
         /// <summary>
         /// Detail of date and time
         /// </summary>
         [DataMember]
-        public DateTime TimeStamp => timeStamp;
+        public DateTime TimeStamp { get; private set; }
         /// <summary>
         /// Credit amount
         /// </summary>
         [DataMember]
         public decimal Credit
         {
-            get => credit;
-            set => credit = value;
+            get
+            {
+                return Credit1;
+            }
+
+            set
+            {
+                Credit1 = value;
+            }
         }
         /// <summary>
         /// Debit amount
         /// </summary>
         [DataMember]
-        public decimal Debit => debit;
+        public decimal Debit { get; private set; }
+
+        public string Detail1 { get; }
+
+        public decimal Credit1 { get; set; }
+
         /// <summary>
         /// Method used to do transaction of amount for a user
         /// </summary>
@@ -73,7 +79,7 @@ namespace AuctionIt.Models
         {
             GetValue("AddAccountRecord", SQLCommandTypes.StoredProcedure, new SqlParameter("@userId", System.Data.SqlDbType.BigInt)
             {
-                Value = user.UserId
+                Value = User.UserId
             },
             new SqlParameter("@debit", System.Data.SqlDbType.Money)
             {
@@ -137,7 +143,7 @@ namespace AuctionIt.Models
 
         public override string GetPrimaryKey()
         {
-            return id.ToString();
+            return Id.ToString();
         }
 
         public override Type GetPrimaryKeyType()
@@ -147,21 +153,21 @@ namespace AuctionIt.Models
 
         public override string GetReferenceString()
         {
-            return string.Format("Record for {0} of {1}, Debit Amount: {2}, Credit Amount: {3}", user.FullName, timeStamp.ToString(), debit, credit);
+            return string.Format("Record for {0} of {1}, Debit Amount: {2}, Credit Amount: {3}", User.FullName, TimeStamp.ToString(), Debit, Credit1);
         }
 
         public override void InitiateValues()
         {
-            var data = GetIteratableData("GetAccountingLog", SQLCommandTypes.StoredProcedure, new System.Data.SqlClient.SqlParameter("@userId", System.Data.SqlDbType.BigInt)
+            var data = GetIteratableData("GetAccountingLog", SQLCommandTypes.StoredProcedure, new SqlParameter("@userId", System.Data.SqlDbType.BigInt)
             {
-                Value = id
+                Value = Id
             });
-            while (data.Read())
+            foreach (var item in data)
             {
-                timeStamp = (DateTime)data["DateTime"];
-                debit = (decimal)data["Debit"];
-                credit = (decimal)data["Credit"];
-                user = new User((long)data["UserId"]);
+                TimeStamp = item.GetDateTime(1);
+                Debit = item.GetDecimal(2);
+                Credit1 = item.GetDecimal(3);
+                User = new User(item.GetInt64(4));
             }
         }
     }

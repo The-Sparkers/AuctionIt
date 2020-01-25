@@ -40,9 +40,9 @@ namespace AuctionIt.Models
                 {
                     Value = id
                 });
-                while (data.Read())
+                foreach (var item in data)
                 {
-                    additionalAttributes.Add(new AdditionalAttribute((int)data[0]));
+                    additionalAttributes.Add(new AdditionalAttribute(item.GetInt32(0)));
                 }
                 return additionalAttributes;
             }
@@ -52,12 +52,27 @@ namespace AuctionIt.Models
         /// Name of the category
         /// </summary>
         [DataMember]
-        public string Name => name;
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+        }
+
         /// <summary>
         /// Primary Key
         /// </summary>
         [DataMember]
-        public int Id => id;
+
+        public int Id
+        {
+            get
+            {
+                return id;
+            }
+        }
+
         /// <summary>
         /// Returns a list of advertisements belong to this category
         /// </summary>
@@ -108,9 +123,9 @@ namespace AuctionIt.Models
             List<Category> lstCategories = new List<Category>();
             Category temp = new Category(0);
             var data = temp.GetIteratableData("GetCategories", SQLCommandTypes.StoredProcedure);
-            while (data.Read())
+            foreach (var item in data)
             {
-                lstCategories.Add(new Category((int)data[0]));
+                lstCategories.Add(new Category(item.GetInt32(0)));
             }
             return lstCategories;
         }
@@ -143,9 +158,9 @@ namespace AuctionIt.Models
             {
                 Value = id
             });
-            while (data.Read())
+            foreach (var item in data)
             {
-                name = (string)data[1];
+                name = item.GetString(1);
             }
         }
 

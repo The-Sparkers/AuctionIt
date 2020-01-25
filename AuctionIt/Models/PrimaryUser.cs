@@ -34,12 +34,26 @@ namespace AuctionIt.Models
         /// Rating for this user as a seller
         /// </summary>
         [DataMember]
-        public double SellerRating => sellerRating;
+        public double SellerRating
+        {
+            get
+            {
+                return sellerRating;
+            }
+        }
+
         /// <summary>
         /// Unique CNIC of this user
         /// </summary>
         [DataMember]
-        public string CNIC => cnic;
+        public string CNIC
+        {
+            get
+            {
+                return cnic;
+            }
+        }
+
         /// <summary>
         /// Gets the history of all th bids placed by this user
         /// </summary>
@@ -76,9 +90,9 @@ namespace AuctionIt.Models
             {
                 Value = UserId
             });
-            while (data.Read())
+            foreach (var item in data)
             {
-                advertisements.Add(new Advertisement((long)data[0]));
+                advertisements.Add(new Advertisement(item.GetInt64(0)));
             }
             return advertisements;
         }
@@ -102,10 +116,11 @@ namespace AuctionIt.Models
             List<PrimaryUser> lstUsers = new List<PrimaryUser>();
             PrimaryUser temp = new PrimaryUser(0);
             var data = temp.GetIteratableData("GetPrimaryUsers", SQLCommandTypes.StoredProcedure);
-            while (data.Read())
+            foreach (var item in data)
             {
-                lstUsers.Add(new PrimaryUser((long)data[0]));
+                lstUsers.Add(new PrimaryUser(item.GetInt64(0)));
             }
+            
             return lstUsers.Where(x => x.FullName.FirstName.Contains(name)).ToList();
         }
         public override List<object> GetAllData()
@@ -131,9 +146,9 @@ namespace AuctionIt.Models
             {
                 Value = UserId
             });
-            while (data.Read())
+            foreach (var item in data)
             {
-                cnic = (string)data["CNIC"];
+                cnic = item.GetString(8);
             }
         }
     }

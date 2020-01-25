@@ -301,10 +301,10 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountingLog.cs" />
-    <Compile Include="Models\Acution.cs" />
     <Compile Include="Models\AdditionalAttributes.cs" />
     <Compile Include="Models\Advertisement.cs" />
     <Compile Include="Models\ASPIdentity\ApplicationUser.cs" />
+    <Compile Include="Models\Auction.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Common.cs" />
     <Compile Include="Models\DbConnection.cs" />

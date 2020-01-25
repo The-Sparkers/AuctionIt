@@ -60,7 +60,7 @@ namespace AuctionIt.Models
             };
             try
             {
-                ExecuteQuery("AddUser", SQLCommandTypes.StoredProcedure, firstName, lastName, countryCode, companyCode, phone, pCity);
+               id=Convert.ToInt64(GetValue("AddUser", SQLCommandTypes.StoredProcedure, firstName, lastName, countryCode, companyCode, phone, pCity));
             }
             catch (SqlException)
             {
@@ -71,7 +71,11 @@ namespace AuctionIt.Models
         [DataMember]
         public Common.Image ProfilePic
         {
-            get => profilePic;
+            get
+            {
+                return profilePic;
+            }
+
             set
             {
                 ExecuteQuery("UPDATE USERS SET ProfilePic='" + value + "' WHERE UserId=" + id, SQLCommandTypes.Query);
@@ -80,13 +84,41 @@ namespace AuctionIt.Models
         }
 
         [DataMember]
-        public ContactNumberFormat PhoneNumber => phoneNumber;
+        public ContactNumberFormat PhoneNumber
+        {
+            get
+            {
+                return phoneNumber;
+            }
+        }
+
         [DataMember]
-        public NameFormat FullName => fullName;
+        public NameFormat FullName
+        {
+            get
+            {
+                return fullName;
+            }
+        }
+
         [DataMember]
-        public string City => city;
+        public string City
+        {
+            get
+            {
+                return city;
+            }
+        }
+
         [DataMember]
-        public long UserId => id;
+        public long UserId
+        {
+            get
+            {
+                return id;
+            }
+        }
+
         [DataMember]
         public bool IsDisabled
         {
@@ -133,9 +165,9 @@ namespace AuctionIt.Models
         /// <param name="username"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public User RegisterIdentity(string username, string password, Roles role)
+        public void RegisterIdentity(string identityId)
         {
-            return null;
+            ExecuteQuery("insert into USER_HAS_IDENTITY(UserId, IdentityId) values(" + id + ", '" + identityId + "')", SQLCommandTypes.Query);
         }
         /// <summary>
         /// Checks the credentials enter by the user.
@@ -202,12 +234,12 @@ namespace AuctionIt.Models
         public override void InitiateValues()
         {
             var data = GetIteratableData("SELECT * FROM USERS WHERE UserId=" + id, SQLCommandTypes.Query);
-            while (data.Read())
+            foreach (var item in data)
             {
-                fullName = new NameFormat { FirstName = (string)data[1], LastName = (string)data[2] };
-                phoneNumber = new ContactNumberFormat((string)data[3], (string)data[4], (string)data[5]);
-                city = (string)data[6];
-                profilePic = new Common.Image { FileName = (string)data[7], ParentId = id };
+                fullName = new NameFormat { FirstName = item.GetString(1), LastName = item.GetString(2) };
+                phoneNumber = new ContactNumberFormat(item.GetString(3), item.GetString(4), item.GetString(5));
+                city = item.GetString(6);
+                profilePic = new Common.Image { FileName = item.GetString(7), ParentId = id };
             }
         }
         /// <summary>
@@ -220,9 +252,9 @@ namespace AuctionIt.Models
             List<User> lstUser = new List<User>();
             User temp = new User(0);
             var data = temp.GetIteratableData("GetUsers", SQLCommandTypes.StoredProcedure);
-            while (data.Read())
+            foreach (var item in data)
             {
-                lstUser.Add(new User((long)data[0]));
+                lstUser.Add(new User(item.GetInt64(0))); 
             }
             return lstUser;
         }
@@ -236,7 +268,8 @@ namespace AuctionIt.Models
             User temp = new User(0);
             return new User(id: Convert.ToInt64(
                 temp.GetValue("GetUserByUserName", SQLCommandTypes.StoredProcedure,
-                new SqlParameter("@username", System.Data.SqlDbType.NVarChar))));
+                new SqlParameter("@username", System.Data.SqlDbType.NVarChar) {
+                    Value = username })));
         }
         /// <summary>
         /// Returns a user after checking its credentials

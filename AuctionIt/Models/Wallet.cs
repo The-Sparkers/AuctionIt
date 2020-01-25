@@ -23,14 +23,24 @@ namespace AuctionIt.Models
         [DataMember]
         public User User
         {
-            get => user;
-            set => user = value;
+            get
+            {
+                return user;
+            }
+            
         }
         /// <summary>
         /// Total Balance in the wallet
         /// </summary>
         [DataMember]
-        public decimal Balance => user.Balance;
+        public decimal Balance
+        {
+            get
+            {
+                return user.Balance;
+            }
+        }
+
         /// <summary>
         /// Deposits funds in to this wallet
         /// </summary>

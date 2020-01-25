@@ -22,10 +22,23 @@ namespace AuctionIt.Models
         /// <summary>
         /// Comments given on the item in the advertisement
         /// </summary>
-        public string Comment => comment;
+        public string Comment
+        {
+            get
+            {
+                return comment;
+            }
+        }
+
         /// <summary>
         /// Rating given upon that item
         /// </summary>
-        public short Rating => rating;
+        public short Rating
+        {
+            get
+            {
+                return rating;
+            }
+        }
     }
 }

@@ -10,26 +10,16 @@ namespace AuctionIt.Models
     [DataContract]
     public class Advertisement : DbConnection
     {
-        private long id;
-        private string title;
-        private decimal startingPrice;
-        private Category category;
-        private PrimaryUser adPoster;
-        private string description;
         private readonly bool isSold;
         private bool isVerified;
-        private DateTime postedTime;
-        private bool isHidden;
-        private User winner;
-        private decimal soldPrice;
-        private Feedback feedback;
+
         /// <summary>
         /// Initialize new Object from the db values using the primary key
         /// </summary>
         /// <param name="id">Primary Key</param>
         public Advertisement(long id)
         {
-            this.id = id;
+            this.Id = id;
             InitiateValues();
         }
 
@@ -37,37 +27,33 @@ namespace AuctionIt.Models
         /// Checks that if this advertisement is hidden from the public 
         /// </summary>
         [DataMember]
-        public bool IsHidden
-        {
-            get => isHidden;
-            set => isHidden = value;
-        }
+        public bool IsHidden { get; set; }
         /// <summary>
         /// Winner of the auction who bid highest in the auction
         /// </summary>
-        public User Winner
-        {
-            get => winner;
-            set => winner = value;
-        }
+        public User Winner { get; set; }
 
         /// <summary>
         /// Time of the advertisement posting
         /// </summary>
         [DataMember]
-        public DateTime PostedTime => postedTime;
+        public DateTime PostedTime { get; private set; }
         /// <summary>
         /// Check to represent if the advertisement is verified or not
         /// </summary>
         [DataMember]
         public bool IsVerified
         {
-            get => isVerified;
+            get
+            {
+                return isVerified;
+            }
+
             set
             {
                 ExecuteQuery("VerifyAd", SQLCommandTypes.StoredProcedure, new System.Data.SqlClient.SqlParameter("@adId", System.Data.SqlDbType.BigInt)
                 {
-                    Value = id
+                    Value = Id
                 });
                 isVerified = value;
             }
@@ -76,12 +62,19 @@ namespace AuctionIt.Models
         /// Check to represent if the advertisement is sold or not
         /// </summary>
         [DataMember]
-        public bool IsSold => (winner != null);
+        public bool IsSold
+        {
+            get
+            {
+                return (Winner != null);
+            }
+        }
+
         /// <summary>
         /// Description of the ad. item
         /// </summary>
         [DataMember]
-        public string Description => description;
+        public string Description { get; private set; }
         /// <summary>
         /// Tags which are associated with the ad.
         /// </summary>
@@ -91,10 +84,10 @@ namespace AuctionIt.Models
             get
             {
                 List<string> lstTags = new List<string>();
-                var data = GetIteratableData("SELECT Tag FROM ADVERTISEMENT_HAS_TAGS WHERE AdId=" + id, SQLCommandTypes.Query);
-                while (data.Read())
+                var data = GetIteratableData("SELECT Tag FROM ADVERTISEMENT_HAS_TAGS WHERE AdId=" + Id, SQLCommandTypes.Query);
+                foreach (var item in data)
                 {
-                    lstTags.Add((string)data[0]);
+                    lstTags.Add(item.GetString(0));
                 }
                 return lstTags;
             }
@@ -108,13 +101,13 @@ namespace AuctionIt.Models
             get
             {
                 List<Common.Image> images = new List<Common.Image>();
-                var data = GetIteratableData("SELECT ImageName FROM ADVERTISEMENT_HAS_IMAGE WHERE AdId=" + id, SQLCommandTypes.Query);
-                while (data.Read())
+                var data = GetIteratableData("SELECT ImageName FROM ADVERTISEMENT_HAS_IMAGE WHERE AdId=" + Id, SQLCommandTypes.Query);
+                foreach (var item in data)
                 {
                     images.Add(new Common.Image
                     {
-                        FileName = (string)data[0],
-                        ParentId = id
+                        FileName = item.GetString(0),
+                        ParentId = Id
                     });
                 }
                 return images;
@@ -124,31 +117,31 @@ namespace AuctionIt.Models
         /// The user who posted the ad.
         /// </summary>
         [DataMember]
-        public PrimaryUser AdPoster => adPoster;
+        public PrimaryUser AdPoster { get; private set; }
         /// <summary>
         /// Category to which the ad. belongs
         /// </summary>
         [DataMember]
-        public Category Category => category;
+        public Category Category { get; private set; }
         /// <summary>
         /// Starting price set by the user
         /// </summary>
         [DataMember]
-        public decimal StartingPrice => startingPrice;
+        public decimal StartingPrice { get; private set; }
         /// <summary>
         /// Title of the advertisement
         /// </summary>
         [DataMember]
-        public string Title => title;
+        public string Title { get; private set; }
         /// <summary>
         /// Primary Key
         /// </summary>
         [DataMember]
-        public long Id => id;
+        public long Id { get; }
         [DataMember]
-        public decimal SoldPrice => soldPrice;
+        public decimal SoldPrice { get; private set; }
         [DataMember]
-        public Feedback Feedback { get => feedback;}
+        public Feedback Feedback { get; private set; }
 
         /// <summary>
         /// Method to add image for the advertisement
@@ -163,7 +156,7 @@ namespace AuctionIt.Models
             },
             new System.Data.SqlClient.SqlParameter("@adId", System.Data.SqlDbType.BigInt)
             {
-                Value = id
+                Value = Id
             });
             return image;
         }
@@ -179,7 +172,7 @@ namespace AuctionIt.Models
             },
             new System.Data.SqlClient.SqlParameter("@adId", System.Data.SqlDbType.BigInt)
             {
-                Value = id
+                Value = Id
             });
         }
         /// <summary>
@@ -213,10 +206,10 @@ namespace AuctionIt.Models
         /// <returns>The details about the auction for this advertisement</returns>
         public Auction VerifyAdvertisement(FranchiseManager verifier, decimal startingBidPrice, DateTime startTime, DateTime endTime)
         {
-            decimal securityFee = startingPrice * 0.25m;
+            decimal securityFee = StartingPrice * 0.25m;
             ExecuteQuery("VerifyAd", SQLCommandTypes.StoredProcedure, new System.Data.SqlClient.SqlParameter("adId", System.Data.SqlDbType.BigInt)
             {
-                Value = id
+                Value = Id
             });
             return new Auction(securityFee, startingBidPrice, startTime, endTime, this);
         }
@@ -243,7 +236,7 @@ namespace AuctionIt.Models
                 },
                 new System.Data.SqlClient.SqlParameter("@adId", System.Data.SqlDbType.BigInt)
                 {
-                    Value = id
+                    Value = Id
                 });
                 return true;
             }
@@ -260,7 +253,7 @@ namespace AuctionIt.Models
         /// <param name="comment"></param>
         public void GiveFeedback(PrimaryUser user, short rating, string comment = null)
         {
-            ExecuteQuery("UPDATE ADVERTISEMENTS SET Rating = " + rating + ", Comment = '" + comment + "' WHERE AdId = " + id, SQLCommandTypes.Query);
+            ExecuteQuery("UPDATE ADVERTISEMENTS SET Rating = " + rating + ", Comment = '" + comment + "' WHERE AdId = " + Id, SQLCommandTypes.Query);
         }
         /// <summary>
         /// Sell item(s) to a buyer
@@ -271,7 +264,7 @@ namespace AuctionIt.Models
         {
             ExecuteQuery("UpdateAdWinner", SQLCommandTypes.StoredProcedure, new System.Data.SqlClient.SqlParameter("@adId", System.Data.SqlDbType.BigInt)
             {
-                Value = id
+                Value = Id
             },
             new System.Data.SqlClient.SqlParameter("@userId", System.Data.SqlDbType.BigInt)
             {
@@ -291,7 +284,7 @@ namespace AuctionIt.Models
             if (isVerified)
             {
                 //auction will be created only if the advertisement is verified
-                return Auction.GetAllAuctions().Where(x => x.Advertisement.Id == id).First();
+                return Auction.GetAllAuctions().Where(x => x.Advertisement.Id == Id).First();
             }
             return null;
         }
@@ -301,7 +294,7 @@ namespace AuctionIt.Models
         /// <returns></returns>
         public List<PrimaryUser> GetInterestedUsers()
         {
-            return PrimaryUser.GetAllPrimaryUsers().Where(x => x.GetFavoriteAdvertisements().Exists(y => y.Id == id)).OrderBy(x => x.FullName.FirstName).ToList();
+            return PrimaryUser.GetAllPrimaryUsers().Where(x => x.GetFavoriteAdvertisements().Exists(y => y.Id == Id)).OrderBy(x => x.FullName.FirstName).ToList();
         }
         /// <summary>
         /// Returns a list of values of additional attributes imposed by the Category
@@ -312,14 +305,14 @@ namespace AuctionIt.Models
             List<AdditionalAttributeValue> additionalAttributes = new List<AdditionalAttributeValue>();
             var data = GetIteratableData("GetAttributesValuesForAdvertisement", SQLCommandTypes.Query, new System.Data.SqlClient.SqlParameter("@id", System.Data.SqlDbType.BigInt)
             {
-                Value = id
+                Value = Id
             });
-            while (data.Read())
+            foreach (var item in data)
             {
                 additionalAttributes.Add(new AdditionalAttributeValue
                 {
-                    Attribute = (string)data[0],
-                    Value = (string)data[1]
+                    Attribute = item.GetString(0),
+                    Value = item.GetString(1)
                 });
             }
             return additionalAttributes;
@@ -336,7 +329,7 @@ namespace AuctionIt.Models
         public Advertisement(PrimaryUser user, string title, string description, decimal startingPrice, Category category, List<AdditionalAttribute.AttributeValue> additionalAttibutes)
         {
             DateTime postingTime = DateTime.Now;
-            id = Convert.ToInt64(GetValue("AddAdvertisement", SQLCommandTypes.StoredProcedure, new System.Data.SqlClient.SqlParameter("@posterId", System.Data.SqlDbType.BigInt)
+            Id = Convert.ToInt64(GetValue("AddAdvertisement", SQLCommandTypes.StoredProcedure, new System.Data.SqlClient.SqlParameter("@posterId", System.Data.SqlDbType.BigInt)
             {
                 Value = user.UserId
             },
@@ -364,11 +357,11 @@ namespace AuctionIt.Models
             ForEach(x => (category.AdditionalAttributes.
             Find(y => y.Name == x.Name)).
             AddAttributeValue(x.Value, this));
-            this.title = title;
-            this.category = category;
-            adPoster = user;
-            this.description = description;
-            this.startingPrice = startingPrice;
+            this.Title = title;
+            this.Category = category;
+            AdPoster = user;
+            this.Description = description;
+            this.StartingPrice = startingPrice;
         }
         /// <summary>
         /// This method will help in searching an advertisement
@@ -378,7 +371,7 @@ namespace AuctionIt.Models
         public static List<Advertisement> Search(string keyword)
         {
             return GetAllAdvertisements()
-                .Where(x => x.Title.Contains(keyword) 
+                .Where(x => x.Title.Contains(keyword)
                 || x.Tags.Contains(keyword)).ToList();
         }
         /// <summary>
@@ -391,9 +384,9 @@ namespace AuctionIt.Models
             List<Advertisement> lstAdvertisments = new List<Advertisement>();
             Advertisement temp = new Advertisement(0);
             var data = temp.GetIteratableData("GetAdvertisements", SQLCommandTypes.StoredProcedure);
-            while (data.Read())
+            foreach (var item in data)
             {
-                lstAdvertisments.Add(new Advertisement((long)data[0]));
+                lstAdvertisments.Add(new Advertisement(item.GetInt64(0)));
             }
             return lstAdvertisments;
         }
@@ -407,17 +400,17 @@ namespace AuctionIt.Models
 
         public override string GetPrimaryKey()
         {
-            return id.ToString();
+            return Id.ToString();
         }
 
         public override Type GetPrimaryKeyType()
         {
-            return id.GetType();
+            return Id.GetType();
         }
 
         public override string GetReferenceString()
         {
-            return string.Format("Title: {0}, Price: {1}, Sold: {2}, Verified: {3}", title, startingPrice, isSold, isVerified);
+            return string.Format("Title: {0}, Price: {1}, Sold: {2}, Verified: {3}", Title, StartingPrice, isSold, isVerified);
         }
 
         public override void InitiateValues()
@@ -425,20 +418,23 @@ namespace AuctionIt.Models
             //Initiate Values from db
             var data = GetIteratableData("GetAdvertisement", SQLCommandTypes.StoredProcedure, new System.Data.SqlClient.SqlParameter("@id", System.Data.SqlDbType.BigInt)
             {
-                Value = id
+                Value = Id
             });
-            while (data.Read())
+            foreach (var item in data)
             {
-                startingPrice = (decimal)data[1];
-                title = (string)data[2];
-                postedTime = (DateTime)data[3];
-                isVerified = (bool)data[4];
-                description = (string)data[5];
-                adPoster = new PrimaryUser((long)data[6]);
-                category = new Category((int)data[7]);
-                winner = data[8] == null ? null : new User((long)data[8]);
-                feedback = new Feedback(data[9] == null ? short.Parse("0") : (short)data[9], data[10] == null ? string.Empty : (string)data[10]);
-                soldPrice = data[11] == null ? 0.0m : (decimal)data[11];
+                StartingPrice = item.GetDecimal(1);
+                Title = item.GetString(2);
+                PostedTime = item.GetDateTime(3);
+                isVerified = item.GetBoolean(4);
+                Description = item.GetString(5);
+                AdPoster = new PrimaryUser(item.GetInt64(6));
+                Category = new Category(item.GetInt32(7));
+                Winner = item.GetValue(8) == null ? null : new User(item.GetInt64(8));
+                Feedback = new Feedback(item.GetValue(9) == null 
+                    ? short.Parse("0") : item.GetInt16(9), 
+                    item.GetValue(10) == null 
+                    ? string.Empty : item.GetString(10));
+                SoldPrice = item.GetValue(11) == null ? 0.0m : item.GetDecimal(11);
             }
         }
 

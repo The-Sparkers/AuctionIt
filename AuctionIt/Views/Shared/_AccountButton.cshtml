@@ -1,6 +1,15 @@
 ﻿@{
-    string username = AuctionIt.Models.User.GetUser(User.Identity.Name).FullName.FirstName;
+    var user = AuctionIt.Models.User.GetUser(User.Identity.Name);
+    string username = user.UserId == 0 ? "" : user.FullName.FirstName;
 }
 <div class="rd-navbar-aside-right">
-    <div class="group-sm"><a class="button button-sm button-primary-2" href="#">Hi! @username</a></div>
+    <div class="group-sm">
+        <a class="button button-sm button-secondary" href="#">Hi! @username</a>
+        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <button class="button button-sm button-primary-2" type="submit">Logout</button>
+
+        }
+    </div>
 </div>

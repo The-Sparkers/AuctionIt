@@ -1,4 +1,5 @@
 ﻿using AuctionIt.ASPNetIdentity;
+using AuctionIt.Models;
 using AuctionIt.ViewModels.AccountViewModels;
 using ImageMagick;
 using Microsoft.AspNet.Identity;
@@ -22,9 +23,18 @@ namespace AuctionIt.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private Thread compressImageThread;
+        private User _user;
 
         public AccountController()
         {
+            try
+            {
+                _user = Request.IsAuthenticated ? Models.User.GetUser(User.Identity.Name) : null;
+            }
+            catch (Exception)
+            {
+                _user = null;
+            }
         }
         [AllowAnonymous]
         public ActionResult Index()
@@ -176,10 +186,13 @@ namespace AuctionIt.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Username, Email = model.Email, PhoneNumber = model.PhoneNumber };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    new PrimaryUser(new User.NameFormat { FirstName = model.FirstName, LastName = model.LastName },
+                        new User.ContactNumberFormat(model.PhoneNumber.Substring(0, 3),
+                        model.PhoneNumber.Substring(3, 3), model.PhoneNumber.Substring(6, 7)), model.City, model.CNIC);
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
@@ -235,10 +248,10 @@ namespace AuctionIt.Controllers
 
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                 // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code }, protocol: Request.Url.Scheme);
+                await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
             // If we got this far, something failed, redisplay form
@@ -287,7 +300,7 @@ namespace AuctionIt.Controllers
         [AllowAnonymous]
         public ActionResult UpdateProfileImage()
         {
-            ViewBag.I = "team-01-270x270.jpg";
+            ViewBag.I = _user.ProfilePic;
             return View();
         }
         [HttpPost]
@@ -302,17 +315,17 @@ namespace AuctionIt.Controllers
                     string pic = Guid.NewGuid().ToString() + System.IO.Path.GetFileName(model.File.FileName);
                     string path = System.IO.Path.Combine(
                                            Server.MapPath(Common.Strings.IMAGES_UPLOAD_PATH), pic);
-                    //try
-                    //{
-                    //    Models.User.GetUser(User.Identity.GetUserId()).ProfilePic = new Models.Common.Image
-                    //    {
-                    //        FileName = pic
-                    //    };
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    return RedirectToAction("Error500", "Errors", new { message = ex.Message });
-                    //}
+                    try
+                    {
+                        _user.ProfilePic = new Models.Common.Image
+                        {
+                            FileName = pic
+                        };
+                    }
+                    catch (Exception ex)
+                    {
+                        return RedirectToAction("Error500", "Errors", new { message = ex.Message });
+                    }
                     // file is uploaded
                     model.File.SaveAs(path);
                     //compress the image
@@ -509,13 +522,18 @@ namespace AuctionIt.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, PhoneNumber=model.PhoneNumber };
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
                     result = await UserManager.AddLoginAsync(user.Id, info.Login);
                     if (result.Succeeded)
                     {
+                        new PrimaryUser(new User.NameFormat { FirstName = model.FirstName, LastName = model.LastName },
+                        new User.ContactNumberFormat(model.PhoneNumber.Substring(0, 3),
+                        model.PhoneNumber.Substring(3, 3), model.PhoneNumber.Substring(6, 7)), model.City, model.CNIC)
+                        .RegisterIdentity(user.Id);
+                        await UserManager.AddToRoleAsync(user.Id, "Primary User");
                         await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                         return RedirectToLocal(returnUrl);
                     }
