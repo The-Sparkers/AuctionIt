@@ -1,8 +1,8 @@
-﻿using System;
+﻿using ModelSQLHandler;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
-using ModelSQLHandler;
 
 namespace AuctionIt.Models
 {
@@ -23,14 +23,14 @@ namespace AuctionIt.Models
         [DataMember]
         public User User
         {
-            get { return user; }
-            set { user = value; }
+            get => user;
+            set => user = value;
         }
         /// <summary>
         /// Total Balance in the wallet
         /// </summary>
         [DataMember]
-        public decimal Balance { get; set; }
+        public decimal Balance => user.Balance;
         /// <summary>
         /// Deposits funds in to this wallet
         /// </summary>
@@ -40,7 +40,8 @@ namespace AuctionIt.Models
         /// <param name="timeStamp">date and time of the transaction</param>
         public void Deposit(decimal amount, string refNumber, PaymentChannel channel, DateTime timeStamp)
         {
-
+            AccountingLog accountingLog = new AccountingLog(user);
+            accountingLog.DoTransaction(amount, 0, timeStamp, channel.ToString());
         }
         /// <summary>
         /// Deposits funds in this wallet
@@ -48,7 +49,8 @@ namespace AuctionIt.Models
         /// <param name="amount">amount which is being deposited</param>
         public void Deposit(decimal amount)
         {
-
+            AccountingLog accountingLog = new AccountingLog(user);
+            accountingLog.DoTransaction(amount, 0, DateTime.Now);
         }
         /// <summary>
         /// Do a payment using this wallet
@@ -56,7 +58,8 @@ namespace AuctionIt.Models
         /// <param name="amount"></param>
         public void UseWallet(decimal amount)
         {
-
+            AccountingLog accountingLog = new AccountingLog(user);
+            accountingLog.DoTransaction(0, amount, DateTime.Now);
         }
         /// <summary>
         /// Get details of different transactions
@@ -66,8 +69,7 @@ namespace AuctionIt.Models
         /// <returns></returns>
         public List<AccountingLog> Statement(DateTime startDate, DateTime endDate)
         {
-            List<AccountingLog> lstTransactions = new List<AccountingLog>();
-            return lstTransactions;
+            return AccountingLog.GetDetailedLog(user, startDate, endDate);
         }
         /// <summary>
         /// Get a list of Online Deposits
@@ -97,7 +99,7 @@ namespace AuctionIt.Models
 
         public override string GetReferenceString()
         {
-            return String.Format("Wallet holder name: {0}, Balance: {1}", user.FullName, Balance);
+            return string.Format("Wallet holder name: {0}, Balance: {1}", user.FullName, Balance);
         }
 
         public override void InitiateValues()

@@ -1,8 +1,10 @@
-﻿using System;
+﻿using ModelSQLHandler;
+using System;
 using System.Collections.Generic;
 using System.Data.HashFunction;
 using System.Data.HashFunction.CityHash;
-using ModelSQLHandler;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace AuctionIt.Models
@@ -14,16 +16,29 @@ namespace AuctionIt.Models
     public class Token : DbConnection
     {
         private string hashKey;
-        private PrimaryUser bidder;
-        private Auction auction;
+        private readonly PrimaryUser bidder;
+        private readonly Auction auction;
+        private long id;
 
-        public Token(string hashKey)
+        public Token(long id)
         {
-            this.hashKey = hashKey;
+            this.id = id;
             InitiateValues();
         }
         internal Token(string hashKey, PrimaryUser bidder, Auction auction)
         {
+            ExecuteQuery("CreateToken", SQLCommandTypes.StoredProcedure, new SqlParameter("@hash", System.Data.SqlDbType.VarChar)
+            {
+                Value = Guid.NewGuid()
+            },
+            new SqlParameter("UserId", System.Data.SqlDbType.BigInt)
+            {
+                Value = bidder.UserId
+            },
+            new SqlParameter("@auctionId", System.Data.SqlDbType.BigInt)
+            {
+                Value = auction.Id
+            });
             this.hashKey = hashKey;
             this.bidder = bidder;
             this.auction = auction;
@@ -32,26 +47,17 @@ namespace AuctionIt.Models
         /// Auction to which this token belongs
         /// </summary>
         [DataMember]
-        public Auction Auction
-        {
-            get { return auction; }
-        }
+        public Auction Auction => auction;
         /// <summary>
         /// User who owned this token
         /// </summary>
         [DataMember]
-        public PrimaryUser Bidder
-        {
-            get { return bidder; }
-        }
+        public PrimaryUser Bidder => bidder;
         /// <summary>
         /// Hashed Key for the token, Primary Key
         /// </summary>
         [DataMember]
-        public string HashKey
-        {
-            get { return hashKey; }
-        }
+        public string HashKey => hashKey;
         /// <summary>
         /// Method to verify a token for a bidder against an auction
         /// </summary>
@@ -77,7 +83,7 @@ namespace AuctionIt.Models
         /// <returns></returns>
         public static Token GetToken(string hashKey)
         {
-            return null;
+            return GetAllTokens().Where(x => x.HashKey == hashKey).First();
         }
         /// <summary>
         /// Static Method to get a hash for a string
@@ -109,6 +115,12 @@ namespace AuctionIt.Models
         public static List<Token> GetAllTokens(int max = 0)
         {
             List<Token> lstTokens = new List<Token>();
+            Token temp = new Token(0);
+            var data = temp.GetIteratableData("SELECT TokenId FROM TOKENS", SQLCommandTypes.StoredProcedure);
+            while (data.Read())
+            {
+                lstTokens.Add(new Token((long)data[0]));
+            }
             return lstTokens;
         }
         public override List<ISQLData> GetAllSQLData()
@@ -130,12 +142,16 @@ namespace AuctionIt.Models
 
         public override string GetReferenceString()
         {
-            return String.Format("Hash Key: {0}", hashKey);
+            return string.Format("Hash Key: {0}", hashKey);
         }
 
         public override void InitiateValues()
         {
             //initialize values from the database
+            var data = GetIteratableData("GetToken", SQLCommandTypes.StoredProcedure, new System.Data.SqlClient.SqlParameter("@id", System.Data.SqlDbType.BigInt)
+            {
+                Value = id
+            });
         }
 
         public override List<object> GetAllData()

@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using AuctionIt.Models.Exceptions;
 using ModelSQLHandler;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
-using AuctionIt.Models.Exceptions;
-using System.Data.SqlClient;
-using System.ComponentModel.DataAnnotations;
 
 namespace AuctionIt.Models
 {
@@ -33,23 +34,35 @@ namespace AuctionIt.Models
         /// <param name="city"></param>
         protected User(NameFormat fullName, ContactNumberFormat phoneNumber, string city)
         {
-            SqlParameter firstName = new SqlParameter("@fName", System.Data.SqlDbType.VarChar)
+            SqlParameter firstName = new SqlParameter("@firstName", System.Data.SqlDbType.VarChar)
             {
                 Value = fullName.FirstName
             };
-            SqlParameter lastName = new SqlParameter("@lName", System.Data.SqlDbType.VarChar)
+            SqlParameter lastName = new SqlParameter("@lastName", System.Data.SqlDbType.VarChar)
             {
                 Value = fullName.LastName
             };
-            SqlParameter phone = new SqlParameter("@pNumber", System.Data.SqlDbType.VarChar)
+            SqlParameter phone = new SqlParameter("@pNumber", System.Data.SqlDbType.NChar)
             {
-                Value = phoneNumber
+                Value = phoneNumber.PhoneNumber
+            };
+            SqlParameter countryCode = new SqlParameter("@pcountryCode", System.Data.SqlDbType.NChar)
+            {
+                Value = phoneNumber.CountryCode
+            };
+            SqlParameter companyCode = new SqlParameter("@pCompanyCode", System.Data.SqlDbType.NChar)
+            {
+                Value = phoneNumber.CompanyCode
+            };
+            SqlParameter pCity = new SqlParameter("@city", System.Data.SqlDbType.VarChar)
+            {
+                Value = city
             };
             try
             {
-                ExecuteQuery("AddNewUser", SQLCommandTypes.StoredProcedure, firstName, lastName, phone);
+                ExecuteQuery("AddUser", SQLCommandTypes.StoredProcedure, firstName, lastName, countryCode, companyCode, phone, pCity);
             }
-            catch (SqlException ex)
+            catch (SqlException)
             {
 
             }
@@ -58,33 +71,22 @@ namespace AuctionIt.Models
         [DataMember]
         public Common.Image ProfilePic
         {
-            get { return profilePic; }
-            set { profilePic = value; }
+            get => profilePic;
+            set
+            {
+                ExecuteQuery("UPDATE USERS SET ProfilePic='" + value + "' WHERE UserId=" + id, SQLCommandTypes.Query);
+                profilePic = value;
+            }
         }
 
         [DataMember]
-        public ContactNumberFormat PhoneNumber
-        {
-            get { return phoneNumber; }
-            set { phoneNumber = value; }
-        }
+        public ContactNumberFormat PhoneNumber => phoneNumber;
         [DataMember]
-        public NameFormat FullName
-        {
-            get { return fullName; }
-            set { fullName = value; }
-        }
+        public NameFormat FullName => fullName;
         [DataMember]
-        public string City
-        {
-            get { return city; }
-            set { city = value; }
-        }
+        public string City => city;
         [DataMember]
-        public long UserId
-        {
-            get { return id; }
-        }
+        public long UserId => id;
         [DataMember]
         public bool IsDisabled
         {
@@ -102,7 +104,10 @@ namespace AuctionIt.Models
             get;
         }
         [DataMember]
-        public decimal Balance { get; }
+        public decimal Balance => AccountingLog.GetDetailedLog(this, DateTime.MinValue, DateTime.MaxValue)
+                    .Select(x => x.Credit).Sum()
+                    - AccountingLog.GetDetailedLog(this, DateTime.MinValue, DateTime.MaxValue)
+                    .Select(x => x.Debit).Sum();
         /// <summary>
         /// Changes the disable flag into the database which is used to block/unblock user from the system activity.
         /// </summary>
@@ -117,7 +122,7 @@ namespace AuctionIt.Models
                 };
                 ExecuteQuery("ChangeDisableFlag", SQLCommandTypes.StoredProcedure, disable);
             }
-            catch (SqlException ex)
+            catch (SqlException)
             {
 
             }
@@ -196,7 +201,14 @@ namespace AuctionIt.Models
 
         public override void InitiateValues()
         {
-            throw new NotImplementedException();
+            var data = GetIteratableData("SELECT * FROM USERS WHERE UserId=" + id, SQLCommandTypes.Query);
+            while (data.Read())
+            {
+                fullName = new NameFormat { FirstName = (string)data[1], LastName = (string)data[2] };
+                phoneNumber = new ContactNumberFormat((string)data[3], (string)data[4], (string)data[5]);
+                city = (string)data[6];
+                profilePic = new Common.Image { FileName = (string)data[7], ParentId = id };
+            }
         }
         /// <summary>
         /// Returns a list of all user record from the database
@@ -206,6 +218,12 @@ namespace AuctionIt.Models
         public static List<User> GetUsers(int max = 0)
         {
             List<User> lstUser = new List<User>();
+            User temp = new User(0);
+            var data = temp.GetIteratableData("GetUsers", SQLCommandTypes.StoredProcedure);
+            while (data.Read())
+            {
+                lstUser.Add(new User((long)data[0]));
+            }
             return lstUser;
         }
         /// <summary>
@@ -215,7 +233,10 @@ namespace AuctionIt.Models
         /// <returns></returns>
         public static User GetUser(string username)
         {
-            return null;
+            User temp = new User(0);
+            return new User(id: Convert.ToInt64(
+                temp.GetValue("GetUserByUserName", SQLCommandTypes.StoredProcedure,
+                new SqlParameter("@username", System.Data.SqlDbType.NVarChar))));
         }
         /// <summary>
         /// Returns a user after checking its credentials
@@ -243,8 +264,7 @@ namespace AuctionIt.Models
         /// <returns></returns>
         public static List<User> SearchUser(string name)
         {
-            List<User> lstUsers = new List<User>();
-            return lstUsers;
+            return GetUsers().Where(x => x.FullName.FullName.Contains(name)).ToList();
         }
 
         public override Type GetObjectType()
@@ -258,7 +278,7 @@ namespace AuctionIt.Models
         [DataContract]
         public class ContactNumberFormat
         {
-            string phoneNumber, countryCode, companyCode;
+            readonly string phoneNumber, countryCode, companyCode;
             /// <summary>
             /// Constructor to initiate contact number class values
             /// </summary>
@@ -285,65 +305,29 @@ namespace AuctionIt.Models
             }
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-            public string CountryCode
-            {
-                get
-                {
-                    return countryCode;
-                }
-            }
-            public string CompanyCode
-            {
-                get
-                {
-                    return companyCode;
-                }
-            }
-            public string PhoneNumber
-            {
-                get
-                {
-                    return phoneNumber;
-                }
-            }
+            public string CountryCode => countryCode;
+            public string CompanyCode => companyCode;
+            public string PhoneNumber => phoneNumber;
             /// <summary>
             /// Method which will return the full phone number.
             /// </summary>
             /// <returns></returns>
             [DataMember]
-            public string PhoneNumberFormat
-            {
-                get
-                {
-                    return countryCode + companyCode + phoneNumber;
-                }
-            }
+            public string PhoneNumberFormat => countryCode + companyCode + phoneNumber;
 
             /// <summary>
             /// Method to get phone number in (+xx-xxx-xxxxxxx) format
             /// </summary>
             /// <returns></returns>
             [DataMember]
-            public string InternationalFormatedPhoneNumber
-            {
-                get
-                {
-                    return countryCode + "-" + companyCode + "-" + phoneNumber;
-                }
-            }
+            public string InternationalFormatedPhoneNumber => countryCode + "-" + companyCode + "-" + phoneNumber;
 
             /// <summary>
             /// Method to get phone number in (0xxx-xxxxxxx)
             /// </summary>
             /// <returns></returns>
             [DataMember]
-            public string LocalFormatedPhoneNumber
-            {
-                get
-                {
-                    return "0" + companyCode + "-" + phoneNumber;
-                }
-            }
+            public string LocalFormatedPhoneNumber => "0" + companyCode + "-" + phoneNumber;
         }
         /// <summary>
         /// Full name for a person
@@ -403,13 +387,7 @@ namespace AuctionIt.Models
                 }
             }
             [DataMember]
-            public string FullName
-            {
-                get
-                {
-                    return firstName + " " + lastName;
-                }
-            }
+            public string FullName => firstName + " " + lastName;
         }
 
         [DataContract]
