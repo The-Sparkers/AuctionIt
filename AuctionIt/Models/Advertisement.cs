@@ -303,7 +303,7 @@ namespace AuctionIt.Models
         public List<AdditionalAttributeValue> GetAdditionalAttributes()
         {
             List<AdditionalAttributeValue> additionalAttributes = new List<AdditionalAttributeValue>();
-            var data = GetIteratableData("GetAttributesValuesForAdvertisement", SQLCommandTypes.Query, new System.Data.SqlClient.SqlParameter("@id", System.Data.SqlDbType.BigInt)
+            var data = GetIteratableData("GetAttributesValuesForAdvertisement", SQLCommandTypes.StoredProcedure, new SqlParameter("@id", System.Data.SqlDbType.BigInt)
             {
                 Value = Id
             });
@@ -429,12 +429,19 @@ namespace AuctionIt.Models
                 Description = item.GetString(5);
                 AdPoster = new PrimaryUser(item.GetInt64(6));
                 Category = new Category(item.GetInt32(7));
-                Winner = item.GetValue(8) == null ? null : new User(item.GetInt64(8));
-                Feedback = new Feedback(item.GetValue(9) == null 
-                    ? short.Parse("0") : item.GetInt16(9), 
-                    item.GetValue(10) == null 
-                    ? string.Empty : item.GetString(10));
-                SoldPrice = item.GetValue(11) == null ? 0.0m : item.GetDecimal(11);
+                try
+                {
+                    Winner = item.GetValue(8) == null ? null : new User(item.GetInt64(8));
+                    Feedback = new Feedback(item.GetValue(9) == null
+                        ? short.Parse("0") : item.GetInt16(9),
+                        item.GetValue(10) == null
+                        ? string.Empty : item.GetString(10));
+                    SoldPrice = item.GetValue(11) == null ? 0.0m : item.GetDecimal(11);
+                }
+                catch (Exception)
+                {
+                    
+                }
             }
         }
 

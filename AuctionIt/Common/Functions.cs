@@ -132,7 +132,7 @@ namespace AuctionIt.Common
         {
             SmtpClient client = new SmtpClient("smtp.live.com")
             {
-                Credentials = new NetworkCredential(Strings.EMAIL_ADDRESS, ""),
+                Credentials = new NetworkCredential(Strings.EMAIL_ADDRESS, SecreteKeys.EMAI_PASSWORD),
                 Port = 587,
                 EnableSsl = true
             };

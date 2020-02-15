@@ -378,6 +378,7 @@
     <Content Include="images\ie8-panel\warning_bar_0000_us.jpg" />
     <Content Include="images\loading.gif" />
     <Content Include="images\logo-default-658x114.png" />
+    <Content Include="images_upload\default.jpg" />
     <Content Include="images_upload\page1_pic1-270x271.jpg" />
     <Content Include="images_upload\page1_pic2-270x271.jpg" />
     <Content Include="images_upload\page1_pic3-270x271.jpg" />
@@ -511,6 +512,7 @@
     <Content Include="Views\Auctions\UnverifiedAuctions.cshtml" />
     <Content Include="Views\Auctions\_CurrentAuctionPriceSection.cshtml" />
     <Content Include="Views\Auctions\_VerifyAdForm.cshtml" />
+    <Content Include="Views\Auctions\PlaceBid.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

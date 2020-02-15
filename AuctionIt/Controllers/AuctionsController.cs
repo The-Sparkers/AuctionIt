@@ -180,79 +180,51 @@ namespace AuctionIt.Controllers
         {
             try
             {
-                //Auction auction = new Auction(id);
-                //AuctionDetailsViewModel model = new AuctionDetailsViewModel
-                //{
-                //    ActualPrice = auction.Advertisement.StartingPrice,
-                //    AdId = auction.Advertisement.Id,
-                //    AuctionId = auction.Id,
-                //    Description = auction.Advertisement.Description,
-                //    HighestBid = auction.HighestBid.Price,
-                //    PosterName = auction.Advertisement.AdPoster.FullName.ToString(),
-                //    Title = auction.Advertisement.Title
-                //};
+                PrimaryUser user = null;
+                if (Request.IsAuthenticated)
+                {
+                    user = new PrimaryUser(Models.User.GetUser(User.Identity.Name).UserId); 
+                }
+                Auction auction = new Auction(id);
                 AuctionDetailsViewModel model = new AuctionDetailsViewModel
                 {
                     Price = new ActiveAuctionPriceViewModel
                     {
-                        ActualPrice = 2000,
-                        HighestBid = 4000,
-                        IsFavorite = false,
-                        NumberOfBids = 10,
-                        Id = 1
+                        ActualPrice = auction.Advertisement.StartingPrice,
+                        HighestBid = auction.HighestBid.Price,
+                        IsFavorite = user == null ? false : user.GetFavoriteAdvertisements().Contains(auction.Advertisement),
+                        NumberOfBids = auction.GetBidsHistory().Count,
+                        Id = auction.Id
                     },
-                    AdId = 1,
-                    AuctionId = 1,
+                    AdId = auction.Advertisement.Id,
+                    AuctionId = auction.Id,
                     ProductDetails = new ProductDetailsViewModel
                     {
-                        Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam consectetur velit eget turpis elementum consequat. Curabitur lectus sapien, porta eget turpis quis, interdum consectetur orci. Aenean in lorem consequat, feugiat eros in, iaculis purus. Vivamus accumsan augue in urna molestie facilisis. Donec dolor eros, iaculis a condimentum imperdiet, hendrerit et leo. Vivamus dignissim fringilla volutpat. Sed imperdiet mi eget libero molestie, vitae tempor erat pharetra. Ut metus neque, luctus iaculis eros vitae, dignissim auctor elit. Integer vel tellus tincidunt, fermentum lacus non, fringilla nisi. Ut eget mattis lorem, sit amet blandit risus. Nullam vitae est elit. Donec ipsum ex, vestibulum vel augue et, euismod cursus est. Pellentesque facilisis libero urna, ut tristique tellus porttitor at."
+                        Description = auction.Advertisement.Description
                     },
                     PostedBy = new PostedByViewModel
                     {
-                        Name = new User.NameFormat { FirstName = "Umair", LastName = "Tahir" },
-                        Id = 199,
-                        ProfilePic = "team-01-270x270.jpg"
+                        Name = auction.Advertisement.AdPoster.FullName,
+                        Id = auction.Advertisement.AdPoster.UserId,
+                        ProfilePic = auction.Advertisement.AdPoster.ProfilePic.FileName
                     },
                     VerifyForm = new VerifyFormViewModel(),
                     Title = "Billieblush Girls Blue Fluffy Cardigan",
 
-                    RemainingTime = TimeSpan.FromMinutes(30.4)
+                    RemainingTime = auction.RemainingTime
                 };
-                model.ProductDetails.Images.Add("page1_pic6-270x217.jpg");
-                model.ProductDetails.Images.Add("page1_pic7-270x217.jpg");
-                model.ProductDetails.Images.Add("page1_pic8-270x217.jpg");
-                model.ProductDetails.Attributes.Add(new Attribute
+                foreach (var item in auction.Advertisement.Images)
                 {
-                    Name = "Brand",
-                    Value = "Levis"
-                });
-                model.ProductDetails.Attributes.Add(new Attribute
+                    model.ProductDetails.Images.Add(item.FileName);
+                }
+                foreach (var item in auction.Advertisement.GetAdditionalAttributes())
                 {
-                    Name = "Color",
-                    Value = "Blue"
-                });
-                model.ProductDetails.Attributes.Add(new Attribute
-                {
-                    Name = "Condition",
-                    Value = "New"
-                });
-                model.ProductDetails.Attributes.Add(new Attribute
-                {
-                    Name = "Lorem",
-                    Value = "Ipsum"
-                });
-                //foreach (var item in auction.Advertisement.Images)
-                //{
-                //    model.Images.Add(item.FileName);
-                //}
-                //foreach (var item in auction.Advertisement.GetAdditionalAttributes())
-                //{
-                //    model.Attributes.Add(new ViewModels.Attribute
-                //    {
-                //        Name = item.Attribute.Name,
-                //        Value = item.Value
-                //    });
-                //}
+                    model.ProductDetails.Attributes.Add(new Attribute
+                    {
+                        Name = item.Attribute,
+                        Value = item.Value
+                    });
+                }
                 return View(model);
             }
             catch (Exception ex)
@@ -358,91 +330,42 @@ namespace AuctionIt.Controllers
                 return RedirectToAction("Error500", "Errors", new { message = ex.Message });
             }
         }
-        public ActionResult FinishedDetails(long? id)
+        public ActionResult FinishedDetails(long id)
         {
             try
             {
-                //Auction auction = new Auction(id);
-                //if (auction.IsClosed || auction.IsEnded)
-                //{
-                //    FinishedAuctionItemDetailViewModel model = new FinishedAuctionItemDetailViewModel
-                //    {
-                //        ActualPrice = auction.HighestBid.Price,
-                //        AdId = auction.Advertisement.Id,
-                //        AuctionId = auction.Id,
-                //        Bids = auction.GetBidsHistory(),
-                //        Description = auction.Advertisement.Description,
-                //        EndingTime = Common.Functions.GetPassedTimeSpanFromNow(auction.EndTime),
-                //        HighestBid = auction.HighestBid.Price,
-                //        Images = auction.Advertisement.Images.Select(x => x.FileName).ToList(),
-                //        PosterId = auction.Advertisement.AdPoster.UserId,
-                //        PosterName = auction.Advertisement.AdPoster.FullName,
-                //        StartingTime = Common.Functions.GetPassedTimeSpanFromNow(auction.StartTime),
-                //        Title = auction.Advertisement.Title
-                //    };
-                //    foreach (var item in auction.Advertisement.GetAdditionalAttributes())
-                //    {
-                //        model.Attributes.Add(new ViewModels.Attribute
-                //        {
-                //            Name = item.Attribute.Name,
-                //            Value = item.Value
-                //        });
-                //    }
-                //    return View(model);
-                //}
-                if (true)
+                Auction auction = new Auction(id);
+                if (auction.IsClosed || auction.IsEnded)
                 {
                     FinishedAuctionItemDetailViewModel model = new FinishedAuctionItemDetailViewModel
                     {
-                        ActualPrice = 2000,
-                        AdId = 1,
-                        AuctionId = 101,
-                        Bids = new List<Auction.Bid>(),
+                        ActualPrice = auction.HighestBid.Price,
+                        AdId = auction.Advertisement.Id,
+                        AuctionId = auction.Id,
+                        Bids = auction.GetBidsHistory(),
                         ProductDetails = new ProductDetailsViewModel
                         {
-                            Description = "Lorem ipsum dolor sit amet, consectetur " +
-                        "adipiscing elit. Nulla sodales porta diam a vulputate. " +
-                        "Etiam vitae varius mi. Curabitur arcu libero, efficitur vitae ornare in, " +
-                        "ullamcorper a sapien. In volutpat varius dui, ac tempus enim pretium sed. " +
-                        "Phasellus molestie convallis lorem, viverra pharetra felis bibendum at. " +
-                        "Proin eros eros, facilisis non dignissim hendrerit, " +
-                        "faucibus sit amet nunc. Vestibulum id porttitor leo, et facilisis urna. " +
-                        "Curabitur ac malesuada diam. Ut volutpat felis vel lacus vehicula aliquet."
+                            Attributes = new List<Attribute>(),
+                            Description = auction.Advertisement.Description,
+                            Images = auction.Advertisement.Images.Select(x => x.FileName).ToList()
                         },
-                        EndingTime = Common.Functions.GetPassedTimeSpanFromNow(new DateTime(2020, 1, 6)),
-                        HighestBid = 4000,
+                        EndingTime = Common.Functions.GetPassedTimeSpanFromNow(auction.EndTime),
+                        HighestBid = auction.HighestBid.Price,
                         PostedBy = new PostedByViewModel
                         {
-                            Id = 10,
-                            Name = new User.NameFormat { FirstName = "Umair", LastName = "Tahir" },
-                            ProfilePic = "team-01-270x270.jpg"
+                            Id = auction.Advertisement.AdPoster.UserId,
+                            Name = auction.Advertisement.AdPoster.FullName,
+                            ProfilePic = auction.Advertisement.AdPoster.ProfilePic.FileName
                         },
-                        StartingTime = Common.Functions.GetPassedDateSpanFromNow(new DateTime(2020, 1, 3)),
-                        Title = "Lorem ipsum dolor"
+                        StartingTime = Common.Functions.GetPassedTimeSpanFromNow(auction.StartTime),
+                        Title = auction.Advertisement.Title
                     };
-                    model.Bids.Add(new Auction.Bid(null, null, 2200, new DateTime(2020, 1, 4, 1, 45, 0, 0)));
-                    model.Bids.Add(new Auction.Bid(null, null, 2300, new DateTime(2020, 1, 4, 6, 34, 0, 0)));
-                    model.Bids.Add(new Auction.Bid(null, null, 2400, new DateTime(2020, 1, 4, 12, 56, 0, 0)));
-                    model.Bids.Add(new Auction.Bid(null, null, 2800, new DateTime(2020, 1, 4, 20, 13, 0, 0)));
-                    model.Bids.Add(new Auction.Bid(null, null, 3200, new DateTime(2020, 1, 5, 4, 11, 0, 0)));
-                    model.Bids.Add(new Auction.Bid(null, null, 3500, new DateTime(2020, 1, 5, 6, 8, 0, 0)));
-                    model.Bids.Add(new Auction.Bid(null, null, 4000, new DateTime(2020, 1, 6, 5, 18, 0, 0)));
-                    model.Bids = model.Bids.OrderByDescending(x => x.Price).ToList();
-                    model.ProductDetails.Images.Add("page1_pic7-270x217.jpg");
-                    model.ProductDetails.Images.Add("page1_pic8-270x217.jpg");
-                    model.ProductDetails.Attributes.Add(new Attribute
-                    {
-                        Name = "Fusce auctor",
-                        Value = "ipsum id"
-                    });
-                    model.ProductDetails.Attributes.Add(new Attribute
-                    {
-                        Name = "Donec tempor",
-                        Value = "ex eget"
-                    });
+                    auction.Advertisement.GetAdditionalAttributes()
+                        .ForEach(x => model.ProductDetails.Attributes
+                        .Add(new Attribute { Name = x.Attribute, Value = x.Value }));
                     return View(model);
                 }
-                //return RedirectToAction("Error404", "Errors");
+                return RedirectToAction("Error404", "Errors");
             }
             catch (Exception ex)
             {
@@ -482,28 +405,61 @@ namespace AuctionIt.Controllers
                 return RedirectToAction("Error500", "Errors", new { message = ex.Message });
             }
         }
+        [Authorize(Roles ="Franchise Manager")]
         public ActionResult UnverifiedAuctions()
         {
-            List<UnverifiedAuctionsViewModel> model = new List<UnverifiedAuctionsViewModel>
+            List<UnverifiedAuctionsViewModel> model = new List<UnverifiedAuctionsViewModel>();
+            foreach (var item in Advertisement.GetAllAdvertisements().Where(x=>!x.IsVerified))
             {
-                new UnverifiedAuctionsViewModel
+                model.Add(new UnverifiedAuctionsViewModel
                 {
-                    Id = 1,
-                    Picture = "page1_pic1-270x271.jpg",
-                    Title = "Lorem Ipsum",
-                    UserName = "Umair Tahir"
-                }
-            };
+                    Id = item.Id,
+                    Picture = item.Images[0].FileName,
+                    Title = item.Title,
+                    UserId = item.AdPoster.UserId,
+                    UserName = item.AdPoster.FullName.FullName
+                });
+            }
             return View(model);
+        }
+        [Authorize(Roles ="Franchise Manager")]
+        public ActionResult VerifyAdvertisement()
+        {
+            return View();
         }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id">primary key of the auction</param>
         /// <returns></returns>
+        [Authorize(Roles ="Primary User")]
         public ActionResult PlaceBid(long id)
         {
-            return View();
+            Auction auction = new Auction(id);
+            PlaceBidDetailsViewModel model = new PlaceBidDetailsViewModel
+            {
+                BidPrice = auction.HighestBid.Price,
+                AuctionId = auction.Id
+            };
+            return View(model);
+        }
+
+        [Authorize(Roles ="Primary User")]
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult PlaceBid(PlaceBidDetailsViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(); 
+            }
+            Auction auction = new Auction(model.AuctionId);
+            if (model.BidPrice<=auction.HighestBid.Price)
+            {
+                return View();
+            }
+            auction.PlaceBid(new Auction.Bid(auction, new PrimaryUser(Models.User.GetUser(User.Identity.Name).UserId), model.BidPrice, DateTime.Now));
+            return RedirectToAction("Index", "Home");
         }
     }
 }

@@ -102,7 +102,14 @@ namespace AuctionIt.Models
             {
                 var bids = GetBidsHistory();
                 bids.OrderByDescending(x => x.TimeStamp);
-                return bids.First();
+                try
+                {
+                    return bids.First();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
             }
         }
         /// <summary>

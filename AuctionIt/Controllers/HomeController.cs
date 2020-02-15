@@ -29,8 +29,8 @@ namespace AuctionIt.Controllers
             {
                 currentAuctionsModel.Add(new AuctionItemViewModel
                 {
-                    ActualPrice = item.Advertisement.StartingPrice,
-                    HighestBid = item.HighestBid.Price,
+                    ActualPrice = decimal.Round(item.Advertisement.StartingPrice,2),
+                    HighestBid = decimal.Round(item.HighestBid==null?0:item.HighestBid.Price,2),
                     Id = item.Id,
                     Image = item.Advertisement.Images[0].FileName,
                     ItemName = item.Advertisement.Title,
@@ -38,46 +38,6 @@ namespace AuctionIt.Controllers
                     TimeToEnd = item.RemainingTime
                 });
             }
-            currentAuctionsModel.Add(new AuctionItemViewModel
-            {
-                ActualPrice = 2000,
-                HighestBid = 3500,
-                Id = 1,
-                Image = "page1_pic5-270x217.jpg",
-                ItemName = "Apple MacBook Air 13'' 1.8GHz 128GB",
-                NumberOfBids = 3,
-                TimeToEnd = TimeSpan.FromMinutes(20)
-            });
-            currentAuctionsModel.Add(new AuctionItemViewModel
-            {
-                ActualPrice = 1000,
-                HighestBid = 1200,
-                Id = 2,
-                Image = "page1_pic6-270x217.jpg",
-                ItemName = "Billieblush Girls Blue Fluffy Cardigan",
-                NumberOfBids = 2,
-                TimeToEnd = TimeSpan.FromMinutes(23)
-            });
-            currentAuctionsModel.Add(new AuctionItemViewModel
-            {
-                ActualPrice = 10000,
-                HighestBid = 13890,
-                Id = 3,
-                Image = "page1_pic7-270x217.jpg",
-                ItemName = "Apple Mac mini Late 2018 (MRTT2)",
-                NumberOfBids = 4,
-                TimeToEnd = TimeSpan.FromMinutes(45)
-            });
-            currentAuctionsModel.Add(new AuctionItemViewModel
-            {
-                ActualPrice = 500,
-                HighestBid = 789,
-                Id = 4,
-                Image = "page1_pic8-270x217.jpg",
-                ItemName = "Lacoste Lerond Leather Trainers",
-                NumberOfBids = 3,
-                TimeToEnd = TimeSpan.FromMinutes(12)
-            });
             model.CurrentAuctions = currentAuctionsModel;
             //Finished Auctions
             List<FinishedAuctionViewModel> finishedAuctionsModel = new List<FinishedAuctionViewModel>();
@@ -93,37 +53,9 @@ namespace AuctionIt.Controllers
                 {
                     Id = item.Id,
                     Name = item.Advertisement.Title,
-                    Price = item.StartingBidPrice
+                    Price = decimal.Round(item.StartingBidPrice,2)
                 });
             }
-            finishedAuctionsModel.Add(new FinishedAuctionViewModel
-            {
-                Id = 10,
-                Name = "Apple MacBook Pro 13'' 2.3GHz 128GB Space Gray",
-                Price = 7800,
-                Image = "page1_pic1-270x271.jpg"
-            });
-            finishedAuctionsModel.Add(new FinishedAuctionViewModel
-            {
-                Id = 11,
-                Name = "Apple iPad Pro 11” Wi-Fi 64GB Silver",
-                Price = 6700,
-                Image = "page1_pic2-270x271.jpg"
-            });
-            finishedAuctionsModel.Add(new FinishedAuctionViewModel
-            {
-                Id = 12,
-                Name = "Ray-Ban High Street 54mm Sunglasses",
-                Price = 9000,
-                Image = "page1_pic3-270x271.jpg"
-            });
-            finishedAuctionsModel.Add(new FinishedAuctionViewModel
-            {
-                Id = 14,
-                Name = "Pier One Classic Dark Blue Ankle Boots",
-                Price = 7800,
-                Image = "page1_pic4-270x271.jpg"
-            });
             model.FinishedAuctions = finishedAuctionsModel;
             return View(model);
         }
@@ -135,18 +67,7 @@ namespace AuctionIt.Controllers
         {
             try
             {
-                List<string> items = new List<string>
-                {
-                    "Ali",
-                    "Hamza",
-                    "Umair",
-                    "Aslam",
-                    "Hamid",
-                    "Ghafoor",
-                    "Haider",
-                    "Zia",
-                    "Saleem"
-                };
+                List<string> items = Auction.GetAllAuctions().Select(x => x.Advertisement.Title).ToList();
                 return Json(items.Where(x => x.ToUpper().StartsWith(term.ToUpper())).ToList(), JsonRequestBehavior.AllowGet);
             }
             catch (Exception)

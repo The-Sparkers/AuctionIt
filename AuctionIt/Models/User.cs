@@ -377,9 +377,16 @@ namespace AuctionIt.Models
             {
                 get
                 {
-                    string firstLetterCapital = firstName.Substring(0, 1).ToUpper();
-                    string restWordSmall = firstName.Substring(1).ToLower();
-                    return firstLetterCapital + restWordSmall;
+                    try
+                    {
+                        string firstLetterCapital = firstName.Substring(0, 1).ToUpper();
+                        string restWordSmall = firstName.Substring(1).ToLower();
+                        return firstLetterCapital + restWordSmall;
+                    }
+                    catch (Exception)
+                    {
+                        return firstName;
+                    }
                 }
                 set
                 {
@@ -402,9 +409,16 @@ namespace AuctionIt.Models
             {
                 get
                 {
-                    string firstLetterCapital = lastName.Substring(0, 1).ToUpper();
-                    string restWordSmall = lastName.Substring(1).ToLower();
-                    return firstLetterCapital + restWordSmall;
+                    try
+                    {
+                        string firstLetterCapital = lastName.Substring(0, 1).ToUpper();
+                        string restWordSmall = lastName.Substring(1).ToLower();
+                        return firstLetterCapital + restWordSmall;
+                    }
+                    catch (Exception)
+                    {
+                        return lastName;
+                    }
                 }
                 set
                 {

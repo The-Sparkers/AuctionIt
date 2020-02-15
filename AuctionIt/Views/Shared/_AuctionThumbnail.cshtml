@@ -10,7 +10,7 @@
         <div class="post-modern-caption">
             <div class="post-modern-price">Price: @(AuctionIt.Common.Strings.CURRENCY_UNIT + Model.ActualPrice)</div>
             <div class="post-modern-price-value">@Model.HighestBid</div>
-            <h5 class="post-modern-link"><a href="@Url.Action("Details", "Auctions", new { id=Model.Id })">@Model.ItemName</a></h5><a class="button button-box-right button-primary" href="@Url.Action("PlaceBid","Auction", new { id=Model.Id })">
+            <h5 class="post-modern-link"><a href="@Url.Action("Details", "Auctions", new { id=Model.Id })">@Model.ItemName</a></h5><a class="button button-box-right button-primary" href="@Url.Action("PlaceBid","Auctions", new { id=Model.Id })">
                 Place a bid
                 <div class="button-box">
                     <div class="button-box-text">X</div>

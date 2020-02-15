@@ -36,19 +36,24 @@ namespace AuctionIt.Controllers
                 _user = null;
             }
         }
-        [AllowAnonymous]
         public ActionResult Index()
         {
+            PrimaryUser primaryUser=null;
+            if (User.IsInRole("Primary User"))
+            {
+                primaryUser = new PrimaryUser(_user.UserId);
+
+            }
             ProfileDetailsViewModel model = new ProfileDetailsViewModel
             {
-                CNIC = "35202-8448219-9",
-                Email = "umair.tahir@gmail.com",
-                FirstName = "Umair",
-                Id = 1,
-                LastName = "Tahir",
-                PhoneNumber = "0307-4172327",
-                ProfilePic = "team-01-270x270.jpg",
-                Username = "ut123"
+                CNIC = primaryUser.CNIC,
+                Email = UserManager.GetEmail(User.Identity.GetUserId()),
+                FirstName = primaryUser.FullName.FirstName,
+                Id = primaryUser.UserId,
+                LastName = primaryUser.FullName.LastName,
+                PhoneNumber = primaryUser.PhoneNumber.LocalFormatedPhoneNumber,
+                ProfilePic = primaryUser.ProfilePic.FileName,
+                Username = User.Identity.Name
             };
             return View(model);
         }
@@ -101,7 +106,7 @@ namespace AuctionIt.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        public ActionResult Login(LoginViewModel model, string returnUrl)
         {
             if (!ModelState.IsValid)
             {
@@ -110,7 +115,7 @@ namespace AuctionIt.Controllers
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, shouldLockout: false);
+            var result = SignInManager.PasswordSignIn(model.Username, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -182,24 +187,26 @@ namespace AuctionIt.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public ActionResult Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Username, Email = model.Email, PhoneNumber = model.PhoneNumber };
-                var result = await UserManager.CreateAsync(user, model.Password);
+                var result = UserManager.Create(user, model.Password);
                 if (result.Succeeded)
                 {
                     new PrimaryUser(new User.NameFormat { FirstName = model.FirstName, LastName = model.LastName },
                         new User.ContactNumberFormat(model.PhoneNumber.Substring(0, 3),
-                        model.PhoneNumber.Substring(3, 3), model.PhoneNumber.Substring(6, 7)), model.City, model.CNIC);
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        model.PhoneNumber.Substring(3, 3), model.PhoneNumber.Substring(6, 7)), model.City, model.CNIC)
+                        .RegisterIdentity(user.Id);
+                    UserManager.AddToRole(user.Id, "Primary User");
+                    SignInManager.SignIn(user, isPersistent: false, rememberBrowser: false);
 
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    string code = UserManager.GenerateEmailConfirmationToken(user.Id);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    UserManager.SendEmail(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -208,6 +215,36 @@ namespace AuctionIt.Controllers
 
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+        [AllowAnonymous]
+        public ActionResult RegisterFranchiseManager()
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser { UserName = "tehreem123", Email = "tehreem@gmail.com", PhoneNumber = "+923012345678" };
+                var result = UserManager.Create(user, "Tehreem123@@");
+                if (result.Succeeded)
+                {
+                    new FranchiseManager(new User.NameFormat { FirstName = "Tehreem", LastName = "Bukhari" },
+                        new User.ContactNumberFormat("+92",
+                        "301", "2345678"), "Lahore", "Johar Town","101XY")
+                        .RegisterIdentity(user.Id);
+                    UserManager.AddToRole(user.Id, "Franchise Manager");
+                    SignInManager.SignIn(user, isPersistent: false, rememberBrowser: false);
+
+                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
+                    // Send an email with this link
+                    string code = UserManager.GenerateEmailConfirmationToken(user.Id);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol: Request.Url.Scheme);
+                    UserManager.SendEmail(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                    return RedirectToAction("Index", "Home");
+                }
+                AddErrors(result);
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View();
         }
 
         //
